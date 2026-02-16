@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📘 slide · quiz (single file)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: linear-gradient(145deg, #1e2b3c 0%, #0f1a24 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .quiz-container {
+      max-width: 900px;
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 50px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.06);
+      padding: 2rem 1.8rem 2.2rem;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      background: linear-gradient(130deg, #f0f3fa, #bdd3ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 2px dashed rgba(255,255,255,0.15);
+      padding-bottom: 0.75rem;
+    }
+    h1 span {
+      font-size: 1.8rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 80px;
+      padding: 0.2rem 1rem;
+      color: #a3c6ff;
+      font-weight: 400;
+      margin-left: auto;
+      border: 1px solid #2d4055;
+    }
+    .slide-area {
+      background: rgba(10, 18, 28, 0.7);
+      border-radius: 2rem;
+      padding: 2rem 2rem 1.8rem;
+      margin: 1.5rem 0 1.2rem;
+      border: 1px solid #2b3e55;
+      box-shadow: inset 0 8px 12px rgba(0,0,0,0.5), 0 2px 0 #3c4f68;
+    }
+    .slide-title {
+      font-size: 1.8rem;
+      font-weight: 500;
+      line-height: 1.4;
+      color: #f0f6ff;
+      text-shadow: 0 2px 5px #00000050;
+      margin-bottom: 2rem;
+      word-break: break-word;
+    }
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    .option-btn {
+      background: #1f2e3f;
+      border: 2px solid #31495e;
+      border-radius: 60px;
+      padding: 1rem 1.8rem;
+      font-size: 1.3rem;
+      font-weight: 500;
+      text-align: left;
+      color: #e5eefb;
+      cursor: pointer;
+      transition: 0.15s ease;
+      box-shadow: 0 6px 0 #0d1a24, 0 4px 12px black;
+      word-break: break-word;
+    }
+    .option-btn:hover:not(:disabled) {
+      background: #274057;
+      border-color: #4f6f8f;
+      transform: scale(1.01);
+    }
+    .option-btn.correct-highlight {
+      background: #1e4a2b;
+      border-color: #33d67c;
+      color: white;
+      box-shadow: 0 0 15px #2eff7c80, 0 4px 0 #0f441f;
+    }
+    .option-btn.wrong-highlight {
+      background: #7a2222;
+      border-color: #ff7373;
+      color: #ffe7e7;
+      box-shadow: 0 0 15px #ff555580, 0 4px 0 #5e1a1a;
+    }
+    .option-btn:disabled {
+      opacity: 0.9;
+      cursor: not-allowed;
+      filter: saturate(0.7);
+    }
+    .feedback-line {
+      min-height: 3rem;
+      margin: 1.8rem 0 1rem;
+      font-size: 1.4rem;
+      font-weight: 500;
+      padding: 0.8rem 1.5rem;
+      border-radius: 60px;
+      background: #0c1a28;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-left: 8px solid #2b5a8c;
+      color: #c6dcff;
+    }
+    .green-feedback { color: #b6ffb0; font-weight: 600; }
+    .red-feedback { color: #ffaea7; font-weight: 600; }
+    .nav-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-top: 1.8rem;
+    }
+    button.nav-btn {
+      background: #2b3f58;
+      border: none;
+      border-radius: 3rem;
+      padding: 0.9rem 2.2rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #eef5ff;
+      border-bottom: 4px solid #142433;
+      letter-spacing: 0.02rem;
+      cursor: pointer;
+      transition: 0.1s ease;
+      box-shadow: 0 5px 12px #00000060;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    button.nav-btn:hover:not(:disabled) {
+      background: #385475;
+      border-bottom-color: #1f3143;
+      transform: translateY(-2px);
+    }
+    button.nav-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+      filter: grayscale(0.5);
+    }
+    .slide-indicator {
+      font-size: 1.4rem;
+      background: #101e2b;
+      padding: 0.6rem 1.6rem;
+      border-radius: 60px;
+      color: #b0ceff;
+      border: 1px solid #264a6b;
+      font-weight: 500;
+    }
+    .reset-btn {
+      background: #2e3f4e;
+      border-bottom-color: #1a2632;
+      padding: 0.9rem 1.8rem;
+    }
+    .footer-credit {
+      text-align: center;
+      color: #778faa;
+      margin-top: 2rem;
+      font-size: 1rem;
+      border-top: 1px dashed #314e68;
+      padding-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div class="quiz-container">
+  <h1>📋 STAT111 - LECTURE 1 <span id="slideCounter">1/3</span></h1>
+
+  <!-- slide area: question + options -->
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading questions...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💬</span> <span id="feedbackText">select an option</span>
+    </div>
+  </div>
+
+  <!-- navigation + reset -->
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 3</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ RESET</button>
+  </div>
+  <div class="footer-credit">
+  <footer>👨‍💻 Developered by @Cimon-THE TECH GUY
+  
+  </footer >
+ 
+</div>
+
+<script>
+  (function() {
+    // --- YOUR SLIDES (QUESTIONS) ---
+    // each object: { question: "string", options: ["opt1", "opt2", ...], correct: number (0‑based index) }
+   const questions = [
+  {
+    question: "What is the main purpose of statistics?",
+    options: [
+      "Collecting data only",
+      "Collecting, analyzing, interpreting, and presenting data",
+      "Analyzing data only",
+      "Predicting the future"
+    ],
+    correct: 1   // "Collecting, analyzing, interpreting, and presenting data"
+  },
+  {
+    question: "Which branch of statistics deals with developing mathematical theorems?",
+    options: [
+      "Applied Statistics",
+      "Descriptive Statistics",
+      "Theoretical Statistics",
+      "Inferential Statistics"
+    ],
+    correct: 2   // "Theoretical Statistics"
+  },
+  {
+    question: "Which area of applied statistics focuses on organizing and summarizing data?",
+    options: [
+      "Inferential Statistics",
+      "Descriptive Statistics",
+      "Theoretical Statistics",
+      "Predictive Statistics"
+    ],
+    correct: 1   // "Descriptive Statistics"
+  },
+  {
+    question: "What is a population in statistics?",
+    options: [
+      "A subset selected from the group of interest",
+      "All individuals/elements of interest in a study",
+      "A numerical summary from a sample",
+      "A survey of a portion"
+    ],
+    correct: 1   // "All individuals/elements of interest in a study"
+  },
+  {
+    question: "What is a parameter?",
+    options: [
+      "Numerical summary from a sample",
+      "Numerical summary of a population",
+      "A subset of the population",
+      "A categorical variable"
+    ],
+    correct: 1   // "Numerical summary of a population"
+  },
+  {
+    question: "Which sampling method involves dividing the population into groups (strata) and randomly selecting from each group?",
+    options: [
+      "Simple random sampling",
+      "Systematic sampling",
+      "Stratified sampling",
+      "Cluster sampling"
+    ],
+    correct: 2   // "Stratified sampling"
+  },
+  {
+    question: "Data collected directly by the researcher is called:",
+    options: [
+      "Secondary data",
+      "Primary data",
+      "Census data",
+      "Sample data"
+    ],
+    correct: 1   // "Primary data"
+  },
+  {
+    question: "Which type of variable is 'gender' (male/female)?",
+    options: [
+      "Quantitative discrete",
+      "Quantitative continuous",
+      "Qualitative nominal",
+      "Qualitative ordinal"
+    ],
+    correct: 2   // "Qualitative nominal"
+  },
+  {
+    question: "Which level of measurement has a true zero point and allows for meaningful ratios?",
+    options: [
+      "Nominal",
+      "Ordinal",
+      "Interval",
+      "Ratio"
+    ],
+    correct: 3   // "Ratio"
+  },
+  {
+    question: "Temperature in degrees Celsius is an example of which level of measurement?",
+    options: [
+      "Nominal",
+      "Ordinal",
+      "Interval",
+      "Ratio"
+    ],
+    correct: 2   // "Interval"
+  },
+  {
+    question: "What is the key difference between discrete and continuous variables?",
+    options: [
+      "Discrete can be measured, continuous can be counted",
+      "Discrete are countable values, continuous can take any value within an interval",
+      "Discrete are qualitative, continuous are quantitative",
+      "Discrete have a true zero, continuous do not"
+    ],
+    correct: 1   // "Discrete are countable values, continuous can take any value within an interval"
+  },
+  {
+    question: "In statistics, a sample is:",
+    options: [
+      "A subset selected from the population",
+      "The entire group of interest",
+      "A numerical summary",
+      "A type of variable"
+    ],
+    correct: 0   // "A subset selected from the population"
+  },
+  {
+    question: "Which of the following is an example of ordinal data?",
+    options: [
+      "Gender (male/female)",
+      "Educational level (high school, bachelor, master)",
+      "Temperature in Kelvin",
+      "Number of children"
+    ],
+    correct: 1   // "Educational level (high school, bachelor, master)"
+  },
+  {
+    question: "A survey that includes every member of the population is called:",
+    options: [
+      "Sample survey",
+      "Census",
+      "Secondary data",
+      "Inferential study"
+    ],
+    correct: 1   // "Census"
+  },
+  {
+    question: "Probability is the study of:",
+    options: [
+      "Collecting data",
+      "Randomness and likelihood of events",
+      "Summarizing data",
+      "Drawing conclusions from samples"
+    ],
+    correct: 1   // "Randomness and likelihood of events"
+  }
+];
+    // --- state ---
+    let currentSlide = 0;                 // 0‑based index
+    let userAnswers = new Array(questions.length).fill(null); // stores selected option index or null
+    let answerLocked = new Array(questions.length).fill(false); // true after an option is selected (slide locked)
+
+    // DOM elements
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const slideIndicator = document.getElementById('slideIndicator');
+
+    // Helper: update counter displays
+    function updateCounters() {
+      slideCounterSpan.textContent = `${currentSlide+1}/${questions.length}`;
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+
+    // render current slide completely (based on state)
+    function renderSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+
+      questionEl.textContent = q.question;
+      const locked = answerLocked[currentSlide];
+      const selectedIdx = userAnswers[currentSlide];
+      const correctIdx = q.correct;
+
+      // generate option buttons
+      let htmlStr = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        // if slide is locked (already answered) we apply highlight classes
+        if (locked) {
+          if (idx === correctIdx) {
+            btnClass += ' correct-highlight';   // correct answer always green
+          }
+          // if user selected this option and it's wrong => red, but only if it's not the correct one (avoid double green+red)
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) {
+            btnClass += ' wrong-highlight';
+          }
+          // edge: if selected is correct, it's already green from correct-highlight (no red)
+        }
+        // disabled attribute if locked
+        const disabledAttr = locked ? 'disabled' : '';
+        htmlStr += `<button class="${btnClass}" data-opt-index="${idx}" ${disabledAttr}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = htmlStr;
+
+      // update feedback message
+      if (locked && selectedIdx !== null) {
+        const isCorrect = (selectedIdx === correctIdx);
+        if (isCorrect) {
+          feedbackTextEl.innerHTML = `<span class="green-feedback">✅ correct! (answer ${correctIdx+1})</span>`;
+        } else {
+          // show which answer was correct in green, indicate wrong
+          const correctAnswerText = q.options[correctIdx];
+          feedbackTextEl.innerHTML = `<span class="red-feedback">❌ wrong. correct answer: </span><span class="green-feedback">"${correctAnswerText}"</span>`;
+        }
+      } else {
+        feedbackTextEl.textContent = '⚡ choose an option';
+      }
+
+      // enable/disable nav buttons
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+
+      // (optional) next button can be disabled if not answered? we want free navigation, but better allow slide switching even if unanswered.
+      // we do not disable next based on answer — user can go back and forth.
+      // but per spec they just need to see red/green after selection.
+    }
+
+    // handle option click (event delegation)
+    function onOptionClick(e) {
+      const target = e.target.closest('.option-btn');
+      if (!target) return;
+      if (target.disabled) return; // just in case
+
+      const selectedIndex = target.dataset.optIndex;
+      if (selectedIndex === undefined) return;
+
+      // check if slide already locked
+      if (answerLocked[currentSlide]) return;
+
+      const idx = parseInt(selectedIndex, 10);
+      const q = questions[currentSlide];
+      const correctIdx = q.correct;
+
+      // --- LOCK answer for this slide
+      answerLocked[currentSlide] = true;
+      userAnswers[currentSlide] = idx;
+
+      // immediately re-render slide to show colors and feedback (red for wrong, green correct)
+      renderSlide();
+
+      // after rendering, the correct answer is green. if selected answer was wrong, the chosen one is red.
+      // feedback message shows correct answer text.
+    }
+
+    // navigation
+    function goToPrev() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        renderSlide();
+        updateCounters();
+      }
+    }
+
+    function goToNext() {
+      if (currentSlide < questions.length - 1) {
+        currentSlide++;
+        renderSlide();
+        updateCounters();
+      }
+    }
+
+    // reset everything: clear all answers, go to first slide
+    function resetQuiz() {
+      currentSlide = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      answerLocked = new Array(questions.length).fill(false);
+      renderSlide();
+      updateCounters();
+    }
+
+    // attach event listeners
+    optionsContainer.addEventListener('click', onOptionClick);
+
+    prevBtn.addEventListener('click', goToPrev);
+    nextBtn.addEventListener('click', goToNext);
+    resetBtn.addEventListener('click', resetQuiz);
+
+    // initial render
+    if (questions.length === 0) {
+      questionEl.textContent = '❗ No slides added. Edit the "questions" array.';
+      optionsContainer.innerHTML = '';
+    } else {
+      renderSlide();
+      updateCounters();
+    }
+
+    // (optional) keyboard arrow hints, but not required.
+    // ensure indicator updates if currentSlide changes from outside? only via functions.
+  })();
+</script>
+</body>
+</html>
