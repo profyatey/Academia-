@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>INTRO COMP Quiz</title>
+  <style>
+   
+ 
+  * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #e4f0fd;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .quiz-container {
+    max-width: 900px;
+    width: 100%;
+    background: rgba(235, 247, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 2.5rem;
+    box-shadow: 0 20px 35px rgba(100, 150, 200, 0.2), 0 8px 20px rgba(70, 120, 180, 0.15);
+    padding: 1.8rem 1.5rem 2rem;
+    border: 1px solid #c6e0ff;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px dashed #b8d6ff;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(130deg, #3b6e9e, #5f9ea0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge {
+    background: #d4e9ff;
+    border-radius: 60px;
+    padding: 0.4rem 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2f5575;
+    border: 1px solid #9fc9ff;
+    box-shadow: inset 0 1px 4px #f0faff, 0 3px 0 #9cb9d9;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge span {
+    background: #bed9ff;
+    padding: 0.2rem 0.9rem;
+    border-radius: 40px;
+    color: #1a3e5c;
+    font-size: 1.4rem;
+    line-height: 1;
+    border: 1px solid #8ab9f0;
+  }
+
+  .slide-area {
+    background: #f1faff;
+    border-radius: 2rem;
+    padding: 1.8rem 1.5rem 1.5rem;
+    margin: 1.2rem 0 1rem;
+    border: 1px solid #c5ddff;
+    box-shadow: inset 0 4px 8px #e4f2ff, 0 6px 0 #b0cbea;
+  }
+
+  .slide-title {
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #1f4766;
+    text-shadow: 0 1px 2px #e4f0ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .option-btn {
+    background: #e6f2ff;
+    border: 2px solid #b6d5ff;
+    border-radius: 50px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: left;
+    color: #1b3a54;
+    cursor: pointer;
+    transition: 0.12s ease;
+    box-shadow: 0 5px 0 #9cb9dc, 0 3px 10px rgba(120, 160, 210, 0.3);
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: #d5e9ff;
+    border-color: #88b8f0;
+    transform: scale(1.01);
+  }
+
+  .option-btn.correct-highlight {
+    background: #d4f0d4;
+    border-color: #5eb85e;
+    color: #1f5420;
+    box-shadow: 0 0 12px #9ae6b0, 0 5px 0 #4a934a;
+  }
+
+  .option-btn.wrong-highlight {
+    background: #ffe0e0;
+    border-color: #ff9494;
+    color: #a13131;
+    box-shadow: 0 0 12px #ffb5b5, 0 5px 0 #c75c5c;
+  }
+
+  .option-btn:disabled {
+    opacity: 0.9;
+    cursor: not-allowed;
+    filter: saturate(0.6);
+  }
+
+  .feedback-line {
+    min-height: 2.8rem;
+    margin: 1.5rem 0 1rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+    padding: 0.7rem 1.4rem;
+    border-radius: 50px;
+    background: #e1f0ff;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-left: 8px solid #9ac2f0;
+    color: #234d6b;
+  }
+
+  .green-feedback { color: #1b7a3b; font-weight: 600; }
+  .red-feedback { color: #bc2c2c; font-weight: 600; }
+
+  .nav-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  button.nav-btn {
+    background: #cde3ff;
+    border: none;
+    border-radius: 3rem;
+    padding: 0.7rem 1.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f4a70;
+    border-bottom: 4px solid #7fa3c7;
+    letter-spacing: 0.02rem;
+    cursor: pointer;
+    transition: 0.1s ease;
+    box-shadow: 0 5px 10px rgba(90, 130, 180, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  button.nav-btn:hover:not(:disabled) {
+    background: #b9d7ff;
+    border-bottom-color: #6087b0;
+    transform: translateY(-2px);
+  }
+
+  button.nav-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+    filter: grayscale(0.4);
+    border-bottom-color: #9bb2cc;
+  }
+
+  .slide-indicator {
+    font-size: 1.2rem;
+    background: #e2f0ff;
+    padding: 0.5rem 1.4rem;
+    border-radius: 60px;
+    color: #26557c;
+    border: 1px solid #9ec3ec;
+    font-weight: 500;
+  }
+
+  .reset-btn {
+    background: #c2dcff;
+    border-bottom-color: #6f94bc;
+    padding: 0.7rem 1.6rem;
+  }
+
+  .footer-credit {
+    text-align: center;
+    color: #6183a3;
+    margin-top: 1.8rem;
+    font-size: 0.95rem;
+    border-top: 1px dashed #b6d3f2;
+    padding-top: 0.8rem;
+  }
+
+  @media (max-width: 550px) {
+    h1 { font-size: 1.7rem; }
+    .score-badge { font-size: 1.1rem; padding: 0.3rem 1rem; }
+    .score-badge span { font-size: 1.2rem; padding: 0.1rem 0.7rem; }
+    .slide-title { font-size: 1.4rem; }
+    .option-btn { font-size: 1rem; padding: 0.8rem 1.2rem; }
+    .feedback-line { font-size: 1.1rem; padding: 0.6rem 1.2rem; }
+    button.nav-btn { font-size: 1rem; padding: 0.6rem 1.3rem; }
+    .slide-indicator { font-size: 1rem; padding: 0.4rem 1rem; }
+    .quiz-container { padding: 1.2rem 1rem 1.5rem; }
+  }
+
+  @media (max-width: 380px) {
+    .header-row { flex-direction: column; align-items: flex-start; }
+    .nav-controls { justify-content: center; }
+  }
+  </style>
+</head>
+<body>
+<div class="quiz-container">
+  <div class="header-row">
+    <h1> DCIT101 LECTURE 1</h1>
+    <div class="score-badge">
+      🏆 SCORE <span id="scoreDisplay">0/15</span>
+    </div>
+  </div>
+
+  <!-- slide area -->
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading questions...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💬</span> <span id="feedbackText">select an option</span>
+    </div>
+  </div>
+
+  <!-- navigation + reset -->
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 15</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ RESET</button>
+  </div>
+  <div class="footer-credit">⚡Developed by @Cimon-THE TECH  GUY</div>
+</div>
+
+<script>
+  (function() {
+    // ================= DCIT 101 QUESTIONS  =================
+    const questions = [
+  {
+    question: "What is the definition of computation?",
+    options: [
+      "The act or process of computing",
+      "The design of computer hardware",
+      "The study of programming languages",
+      "The management of computer networks"
+    ],
+    correct: 0
+  },
+  {
+    question: "What is data?",
+    options: [
+      "Processed facts ready for use",
+      "A set of instructions for the computer",
+      "A name given to a basic fact",
+      "The physical components of a computer"
+    ],
+    correct: 2
+  },
+  {
+    question: "What is information?",
+    options: [
+      "Raw facts entered into a computer",
+      "Data that has been converted into a more useful form",
+      "Instructions written for a computer",
+      "The output device of a computer"
+    ],
+    correct: 1
+  },
+  {
+    question: "What is a program?",
+    options: [
+      "A physical component of a computer",
+      "A set of instructions written in the language of the computer to perform a specific task",
+      "Raw data entered into a computer",
+      "The output produced by a computer"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which of the following is the formal definition of a computer?",
+    options: [
+      "A machine used only for calculations",
+      "A device that works under the control of stored programs, automatically accepting, storing and processing data to produce information",
+      "A device that only accepts keyboard input and displays output on a screen",
+      "A machine that stores programs but cannot process data"
+    ],
+    correct: 1
+  },
+  {
+    question: "What is a peripheral device?",
+    options: [
+      "The CPU of a computer",
+      "Any device that is external to the CPU and main memory",
+      "The main memory of a computer",
+      "Software installed on a computer"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which of the following best describes hardware?",
+    options: [
+      "Programs and documentation used on a computer",
+      "The electronic and mechanical elements of the computer",
+      "The operating system of a computer",
+      "Instructions stored in memory"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which of the following best describes software?",
+    options: [
+      "The mechanical parts of a computer",
+      "The screen and keyboard of a computer",
+      "All the various programs that may be used on a computer system",
+      "The CPU and memory chips"
+    ],
+    correct: 2
+  },
+  {
+    question: "Which of the following is the earliest computing tool discussed in the lecture?",
+    options: [
+      "Pascaline",
+      "Napier's Bones",
+      "The Abacus",
+      "Jacquard's Loom"
+    ],
+    correct: 2
+  },
+  {
+    question: "Who invented the Pascaline?",
+    options: [
+      "Charles Babbage",
+      "Gottfried Wilhelm von Leibniz",
+      "Blaise Pascal",
+      "John Napier"
+    ],
+    correct: 2
+  },
+  {
+    question: "What did John Napier invent that was widely used in Europe until the mid-1960s?",
+    options: [
+      "The Analytical Engine",
+      "Napier's Bones",
+      "The Difference Engine",
+      "The Pascaline"
+    ],
+    correct: 1
+  },
+  {
+    question: "What is the significance of Charles Babbage's Analytical Engine?",
+    options: [
+      "It was the first machine to use vacuum tubes",
+      "It was the first machine to use transistors",
+      "Its design is considered the foundation of modern computing",
+      "It was the first machine to use punch cards"
+    ],
+    correct: 2
+  },
+  {
+    question: "Why is Ada Lovelace referred to as the world's first programmer?",
+    options: [
+      "She built the first electronic computer",
+      "She invented the integrated circuit",
+      "She described how the Analytical Engine could be configured to solve various problems",
+      "She developed the first programming language compiler"
+    ],
+    correct: 2
+  },
+  {
+    question: "What problem did Herman Hollerith's tabulating machine solve?",
+    options: [
+      "It helped crack the German Enigma Code",
+      "It processed the US Census data that previously took nearly a decade to compute",
+      "It performed the first weather calculations",
+      "It designed the first computer chip"
+    ],
+    correct: 1
+  },
+  {
+    question: "What company did Hollerith's Tabulating Machine Company eventually become?",
+    options: [
+      "Microsoft",
+      "Apple",
+      "Intel",
+      "IBM"
+    ],
+    correct: 3
+  },
+  {
+    question: "Which of the following is NOT a contribution of Alan Turing?",
+    options: [
+      "Formalized the notions of computation and computability",
+      "Helped break the German Enigma Code during WWII",
+      "Invented the integrated circuit",
+      "Developed the concept of the Turing Test in 1950"
+    ],
+    correct: 2
+  },
+  {
+    question: "What does ENIAC stand for?",
+    options: [
+      "Electronic Numerical Integrator and Computer",
+      "Electronic Network Integrated Arithmetic Computer",
+      "Electrical Numeric Integrating and Calculating machine",
+      "Electronic National Intelligence and Computing machine"
+    ],
+    correct: 0
+  },
+  {
+    question: "Who led the team that developed the first compiled programming language (A-0)?",
+    options: [
+      "Ada Lovelace",
+      "Grace Hopper",
+      "Alan Turing",
+      "Charles Babbage"
+    ],
+    correct: 1
+  },
+  {
+    question: "Who are credited with the invention of the integrated circuit?",
+    options: [
+      "Bill Gates and Paul Allen",
+      "Steve Jobs and Steve Wozniak",
+      "Robert Noyce and Jack Kilby",
+      "Larry Page and Sergey Brin"
+    ],
+    correct: 2
+  },
+  {
+    question: "What does Moore's Law state?",
+    options: [
+      "Computer processing speed doubles every 5 years",
+      "The complexity of integrated circuits doubles every 18 months",
+      "The cost of computers halves every 10 years",
+      "Computer memory doubles every 12 months"
+    ],
+    correct: 1
+  },
+  {
+    question: "Who developed the World Wide Web and in what year?",
+    options: [
+      "Larry Page, 1998",
+      "Tim Berners-Lee, 1990",
+      "Marc Andreessen, 1993",
+      "Vint Cerf, 1983"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which was the first Internet browser?",
+    options: [
+      "Google Chrome",
+      "Internet Explorer",
+      "Mosaic",
+      "Netscape"
+    ],
+    correct: 2
+  },
+  {
+    question: "Which company introduced the first personal computer with a full GUI operating system in 1984?",
+    options: [
+      "IBM",
+      "Microsoft",
+      "Xerox",
+      "Apple"
+    ],
+    correct: 3
+  },
+  {
+    question: "Which of the following best describes Computer Science?",
+    options: [
+      "The study of computers and their hardware components",
+      "The study of algorithmic processes including their theory, design, efficiency, and application",
+      "The study of software installation and maintenance",
+      "The study of internet technologies and networking"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which of the following is NOT a required property of an algorithm?",
+    options: [
+      "Be well-ordered and unambiguous",
+      "Be executable",
+      "Solve the problem",
+      "Run on a computer"
+    ],
+    correct: 3
+  },
+  {
+    question: "What type of operation is 'If batter is too dry, add water' in an algorithm?",
+    options: [
+      "Basic operation",
+      "Looping operation",
+      "Conditional operation",
+      "Recursive operation"
+    ],
+    correct: 2
+  },
+  {
+    question: "What is a problem specification?",
+    options: [
+      "A list of hardware requirements for solving a problem",
+      "A clear problem statement that defines the required input and the expected output",
+      "The algorithm used to solve a problem",
+      "The programming language used to code a solution"
+    ],
+    correct: 1
+  },
+  {
+    question: "What was Hilbert's Challenge of 1928?",
+    options: [
+      "To build the first electronic computer",
+      "To find an infallible mechanical method for constructing and checking the truth of mathematical statements",
+      "To develop the first programming language",
+      "To create the first integrated circuit"
+    ],
+    correct: 1
+  },
+  {
+    question: "What did Turing, Church, and Gödel conclude about Hilbert's Challenge?",
+    options: [
+      "They solved Hilbert's Challenge successfully",
+      "They showed there is no solution to Hilbert's Challenge",
+      "They proved it could be solved using binary logic",
+      "They developed a partial solution using assembly language"
+    ],
+    correct: 1
+  },
+  {
+    question: "What is the Church-Turing Thesis?",
+    options: [
+      "Every computer must be able to run any algorithm",
+      "The Turing Machine captures what we mean by computational systems and is as powerful as any other mechanical computing agent",
+      "All programming languages are equally powerful",
+      "A computer can solve any mathematical problem given enough time"
+    ],
+    correct: 1
+  },
+  {
+    question: "Why are artificial languages preferred over natural languages in computing?",
+    options: [
+      "Natural languages are too short",
+      "Natural languages are often flexible and ambiguous while artificial languages have precise meanings",
+      "Artificial languages are easier for humans to understand",
+      "Natural languages cannot express mathematical ideas"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which of the following correctly lists the four basic functions of a computer?",
+    options: [
+      "Input, Processing, Output, Networking",
+      "Input, Storage, Processing, Output",
+      "Input, Memory, Output, Programming",
+      "Processing, Storage, Output, Display"
+    ],
+    correct: 1
+  },
+  {
+    question: "How many bytes are in 1 Megabyte (MB)?",
+    options: [
+      "1,000 bytes",
+      "1,024 bytes",
+      "1,048,576 bytes",
+      "1,073,741,824 bytes"
+    ],
+    correct: 2
+  },
+  {
+    question: "Which category of computer can support up to 100 user terminals?",
+    options: [
+      "Microcomputer",
+      "Minicomputer",
+      "Mainframe computer",
+      "Supercomputer"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which category of computer is the most powerful and costs several million dollars?",
+    options: [
+      "Microcomputer",
+      "Minicomputer",
+      "Mainframe computer",
+      "Supercomputer"
+    ],
+    correct: 3
+  },
+  {
+    question: "Which computer generation introduced vacuum valve technology?",
+    options: [
+      "Second generation",
+      "Third generation",
+      "First generation",
+      "Fourth generation"
+    ],
+    correct: 2
+  },
+  {
+    question: "Which generation of computers is based on transistor technology?",
+    options: [
+      "First generation",
+      "Second generation",
+      "Third generation",
+      "Fourth generation"
+    ],
+    correct: 1
+  },
+  {
+    question: "What is firmware?",
+    options: [
+      "Software that can be frequently updated",
+      "Programs permanently etched into memory that cannot be changed",
+      "The operating system of a general purpose computer",
+      "Hardware used to connect peripheral devices"
+    ],
+    correct: 1
+  },
+  {
+    question: "What is an embedded computer?",
+    options: [
+      "A computer built into a network server",
+      "A computer dedicated to performing a particular function within a larger system",
+      "A portable laptop computer",
+      "A computer that runs only one programming language"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which of the following is an example of an embedded computer?",
+    options: [
+      "A laptop running Microsoft Word",
+      "A desktop used for gaming",
+      "A temperature controller in a greenhouse",
+      "A server hosting a website"
+    ],
+    correct: 2
+  },
+  {
+    question: "Which of the following is systems software?",
+    options: [
+      "A payroll program",
+      "A word processor",
+      "An operating system",
+      "A graphics design application"
+    ],
+    correct: 2
+  },
+  {
+    question: "Which of the following is applications software?",
+    options: [
+      "An assembler",
+      "A compiler",
+      "A word processor",
+      "A graphical user interface"
+    ],
+    correct: 2
+  },
+  {
+    question: "What is machine language?",
+    options: [
+      "A language similar to everyday English used by programmers",
+      "The only language computers directly understand, consisting of strings of 0s and 1s",
+      "A language that requires a compiler to translate it",
+      "Assembly language instructions used by the CPU"
+    ],
+    correct: 1
+  },
+  {
+    question: "What does an assembler do?",
+    options: [
+      "Translates high-level language into machine code",
+      "Translates assembly language into machine code",
+      "Executes high-level language programs directly",
+      "Converts machine code into assembly language"
+    ],
+    correct: 1
+  },
+  {
+    question: "What does a compiler do?",
+    options: [
+      "Translates assembly language into machine code",
+      "Executes high-level language programs one line at a time",
+      "Translates a high-level language source program into machine code",
+      "Converts machine code back into high-level language"
+    ],
+    correct: 2
+  },
+  {
+    question: "How does an interpreter differ from a compiler?",
+    options: [
+      "An interpreter translates the entire program before execution; a compiler executes line by line",
+      "An interpreter directly executes high-level language programs without producing a separate object program",
+      "An interpreter only works with machine language",
+      "An interpreter produces faster programs than a compiler"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which of the following is a high-level programming language?",
+    options: [
+      "Machine code",
+      "Assembly language",
+      "Java",
+      "Binary"
+    ],
+    correct: 2
+  },
+  {
+    question: "What is the stored program concept?",
+    options: [
+      "Storing backup copies of programs on external drives",
+      "Storing programs in electronic memory alongside the data so they can be executed sequentially",
+      "Keeping programs in ROM so they cannot be altered",
+      "Compressing programs to save disk space"
+    ],
+    correct: 1
+  },
+  {
+    question: "In Object-Oriented Programming (OOP), what is an object?",
+    options: [
+      "A loop used to repeat instructions",
+      "A variable that stores a single value",
+      "An entity characterized by a state (data) and behavior (methods)",
+      "A function that performs arithmetic operations"
+    ],
+    correct: 2
+  },
+  {
+    question: "What distinguishes structured programming from object-oriented programming?",
+    options: [
+      "Structured programming uses objects; OOP uses functions",
+      "Structured programming focuses on how the program solves a task; OOP organizes programs around objects with state and behavior",
+      "Structured programming uses only machine language; OOP uses high-level languages",
+      "Structured programming was developed after OOP"
+    ],
+    correct: 1
+  }
+    ];
+
+    // ---------- state ----------
+    let currentSlide = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let answerLocked = new Array(questions.length).fill(false);
+
+    // DOM elements
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+
+    // update score
+    function updateScore() {
+      let correctCount = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answerLocked[i] && userAnswers[i] === questions[i].correct) {
+          correctCount++;
+        }
+      }
+      scoreDisplay.textContent = `${correctCount}/${questions.length}`;
+    }
+
+    // render current slide
+    function renderSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+
+      questionEl.textContent = q.question;
+      const locked = answerLocked[currentSlide];
+      const selectedIdx = userAnswers[currentSlide];
+      const correctIdx = q.correct;
+
+      let htmlStr = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (locked) {
+          if (idx === correctIdx) {
+            btnClass += ' correct-highlight';
+          }
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) {
+            btnClass += ' wrong-highlight';
+          }
+        }
+        const disabledAttr = locked ? 'disabled' : '';
+        htmlStr += `<button class="${btnClass}" data-opt-index="${idx}" ${disabledAttr}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = htmlStr;
+
+      // feedback
+      if (locked && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) {
+          feedbackTextEl.innerHTML = `<span class="green-feedback">✅ correct!</span>`;
+        } else {
+          const correctAnswerText = q.options[correctIdx];
+          feedbackTextEl.innerHTML = `<span class="red-feedback">❌ wrong. correct: </span><span class="green-feedback">"${correctAnswerText}"</span>`;
+        }
+      } else {
+        feedbackTextEl.textContent = '⚡ choose an option';
+      }
+
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+
+    // click handler
+    function onOptionClick(e) {
+      const target = e.target.closest('.option-btn');
+      if (!target || target.disabled) return;
+      if (answerLocked[currentSlide]) return;
+
+      const idx = parseInt(target.dataset.optIndex, 10);
+      answerLocked[currentSlide] = true;
+      userAnswers[currentSlide] = idx;
+
+      renderSlide();
+      updateScore();
+    }
+
+    function goToPrev() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        renderSlide();
+      }
+    }
+
+    function goToNext() {
+      if (currentSlide < questions.length - 1) {
+        currentSlide++;
+        renderSlide();
+      }
+    }
+
+    function resetQuiz() {
+      currentSlide = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      answerLocked = new Array(questions.length).fill(false);
+      renderSlide();
+      updateScore();
+    }
+
+    // attach events
+    optionsContainer.addEventListener('click', onOptionClick);
+    prevBtn.addEventListener('click', goToPrev);
+    nextBtn.addEventListener('click', goToNext);
+    resetBtn.addEventListener('click', resetQuiz);
+
+    // initial render
+    if (questions.length) {
+      renderSlide();
+      updateScore();
+    } else {
+      questionEl.textContent = '❗ No questions.';
+    }
+  })();
+</script>
+</body>
+</html>
