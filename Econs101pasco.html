@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>ECONS 101 PASCO </title>
+  <style>
+    
+  * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #e4f0fd;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .quiz-container {
+    max-width: 900px;
+    width: 100%;
+    background: rgba(235, 247, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 2.5rem;
+    box-shadow: 0 20px 35px rgba(100, 150, 200, 0.2), 0 8px 20px rgba(70, 120, 180, 0.15);
+    padding: 1.8rem 1.5rem 2rem;
+    border: 1px solid #c6e0ff;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px dashed #b8d6ff;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(130deg, #3b6e9e, #5f9ea0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge {
+    background: #d4e9ff;
+    border-radius: 60px;
+    padding: 0.4rem 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2f5575;
+    border: 1px solid #9fc9ff;
+    box-shadow: inset 0 1px 4px #f0faff, 0 3px 0 #9cb9d9;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge span {
+    background: #bed9ff;
+    padding: 0.2rem 0.9rem;
+    border-radius: 40px;
+    color: #1a3e5c;
+    font-size: 1.4rem;
+    line-height: 1;
+    border: 1px solid #8ab9f0;
+  }
+
+  .slide-area {
+    background: #f1faff;
+    border-radius: 2rem;
+    padding: 1.8rem 1.5rem 1.5rem;
+    margin: 1.2rem 0 1rem;
+    border: 1px solid #c5ddff;
+    box-shadow: inset 0 4px 8px #e4f2ff, 0 6px 0 #b0cbea;
+  }
+
+  .slide-title {
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #1f4766;
+    text-shadow: 0 1px 2px #e4f0ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .option-btn {
+    background: #e6f2ff;
+    border: 2px solid #b6d5ff;
+    border-radius: 50px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: left;
+    color: #1b3a54;
+    cursor: pointer;
+    transition: 0.12s ease;
+    box-shadow: 0 5px 0 #9cb9dc, 0 3px 10px rgba(120, 160, 210, 0.3);
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: #d5e9ff;
+    border-color: #88b8f0;
+    transform: scale(1.01);
+  }
+
+  .option-btn.correct-highlight {
+    background: #d4f0d4;
+    border-color: #5eb85e;
+    color: #1f5420;
+    box-shadow: 0 0 12px #9ae6b0, 0 5px 0 #4a934a;
+  }
+
+  .option-btn.wrong-highlight {
+    background: #ffe0e0;
+    border-color: #ff9494;
+    color: #a13131;
+    box-shadow: 0 0 12px #ffb5b5, 0 5px 0 #c75c5c;
+  }
+
+  .option-btn:disabled {
+    opacity: 0.9;
+    cursor: not-allowed;
+    filter: saturate(0.6);
+  }
+
+  .feedback-line {
+    min-height: 2.8rem;
+    margin: 1.5rem 0 1rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+    padding: 0.7rem 1.4rem;
+    border-radius: 50px;
+    background: #e1f0ff;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-left: 8px solid #9ac2f0;
+    color: #234d6b;
+  }
+
+  .green-feedback { color: #1b7a3b; font-weight: 600; }
+  .red-feedback { color: #bc2c2c; font-weight: 600; }
+
+  .nav-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  button.nav-btn {
+    background: #cde3ff;
+    border: none;
+    border-radius: 3rem;
+    padding: 0.7rem 1.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f4a70;
+    border-bottom: 4px solid #7fa3c7;
+    letter-spacing: 0.02rem;
+    cursor: pointer;
+    transition: 0.1s ease;
+    box-shadow: 0 5px 10px rgba(90, 130, 180, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  button.nav-btn:hover:not(:disabled) {
+    background: #b9d7ff;
+    border-bottom-color: #6087b0;
+    transform: translateY(-2px);
+  }
+
+  button.nav-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+    filter: grayscale(0.4);
+    border-bottom-color: #9bb2cc;
+  }
+
+  .slide-indicator {
+    font-size: 1.2rem;
+    background: #e2f0ff;
+    padding: 0.5rem 1.4rem;
+    border-radius: 60px;
+    color: #26557c;
+    border: 1px solid #9ec3ec;
+    font-weight: 500;
+  }
+
+  .reset-btn {
+    background: #c2dcff;
+    border-bottom-color: #6f94bc;
+    padding: 0.7rem 1.6rem;
+  }
+
+  .footer-credit {
+    text-align: center;
+    color: #6183a3;
+    margin-top: 1.8rem;
+    font-size: 0.95rem;
+    border-top: 1px dashed #b6d3f2;
+    padding-top: 0.8rem;
+  }
+
+  @media (max-width: 550px) {
+    h1 { font-size: 1.7rem; }
+    .score-badge { font-size: 1.1rem; padding: 0.3rem 1rem; }
+    .score-badge span { font-size: 1.2rem; padding: 0.1rem 0.7rem; }
+    .slide-title { font-size: 1.4rem; }
+    .option-btn { font-size: 1rem; padding: 0.8rem 1.2rem; }
+    .feedback-line { font-size: 1.1rem; padding: 0.6rem 1.2rem; }
+    button.nav-btn { font-size: 1rem; padding: 0.6rem 1.3rem; }
+    .slide-indicator { font-size: 1rem; padding: 0.4rem 1rem; }
+    .quiz-container { padding: 1.2rem 1rem 1.5rem; }
+  }
+
+  @media (max-width: 380px) {
+    .header-row { flex-direction: column; align-items: flex-start; }
+    .nav-controls { justify-content: center; }
+  }
+
+  </style>
+</head>
+<body>
+<div class="quiz-container">
+  <div class="header-row">
+    <h1>ECONS101 Pasco</h1>
+    <div class="score-badge">
+      🏆 SCORE <span id="scoreDisplay">0/15</span>
+    </div>
+  </div>
+
+  <!-- slide area -->
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading questions...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💬</span> <span id="feedbackText">select an option</span>
+    </div>
+  </div>
+
+  <!-- navigation + reset -->
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 15</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ RESET</button>
+  </div>
+  <div class="footer-credit">⚡Developed with ❤️ by @Cimon - THE TECH GUY</div>
+</div>
+
+<script>
+  (function() {
+    // =================  ECONS101  =================
+    const questions = [
+{
+  "question": "Economics is",
+  "options": [
+    "the narrow study of how to make money in financial markets",
+    "the broad study of how to allocate unlimited resources to satisfy limited uses",
+    "the broad study of how to allocate limited resources to satisfy unlimited wants",
+    "the narrow study of using stocks and bonds to their maximum potential"
+  ],
+  "correct": 2
+},
+{
+  "question": "Economics deals with how",
+  "options": [
+    "individuals make decisions to use scarce resources in order to satisfy unlimited wants",
+    "to run a business",
+    "individuals become rich",
+    "society eliminates scarcity"
+  ],
+  "correct": 0
+},
+{
+  "question": "Microeconomics is the study of",
+  "options": [
+    "the overall economy",
+    "individual households and firms",
+    "government policies only",
+    "international trade only"
+  ],
+  "correct": 1
+},
+{
+  "question": "Scarcity means",
+  "options": [
+    "resources are unlimited",
+    "wants are limited",
+    "resources are limited but wants are unlimited",
+    "prices are always high"
+  ],
+  "correct": 2
+},
+{
+  "question": "Opportunity cost is",
+  "options": [
+    "money spent on goods",
+    "benefit of the chosen option",
+    "value of the next best alternative forgone",
+    "total production cost"
+  ],
+  "correct": 2
+},
+{
+  "question": "A production possibility frontier shows",
+  "options": [
+    "consumer demand",
+    "maximum combinations of goods that can be produced",
+    "market prices",
+    "income levels"
+  ],
+  "correct": 1
+},
+{
+  "question": "Points inside the PPF are",
+  "options": [
+    "efficient",
+    "inefficient",
+    "unattainable",
+    "optimal"
+  ],
+  "correct": 1
+},
+{
+  "question": "Points on the PPF are",
+  "options": [
+    "inefficient",
+    "efficient",
+    "impossible",
+    "wasteful"
+  ],
+  "correct": 1
+},
+{
+  "question": "Economic growth is shown by",
+  "options": [
+    "movement along PPF",
+    "shift inward of PPF",
+    "shift outward of PPF",
+    "no change"
+  ],
+  "correct": 2
+},
+{
+  "question": "A mixed economy is one that",
+  "options": [
+    "uses only market system",
+    "uses only command system",
+    "uses both market and government systems",
+    "has no economy"
+  ],
+  "correct": 2
+},
+{
+  "question": "A model in economics is used to",
+  "options": [
+    "confuse students",
+    "simplify reality",
+    "increase complexity",
+    "replace real life"
+  ],
+  "correct": 1
+},
+{
+  "question": "A positive statement is",
+  "options": [
+    "what should be",
+    "what is testable and factual",
+    "an opinion",
+    "a recommendation"
+  ],
+  "correct": 1
+},
+{
+  "question": "Normative statements are",
+  "options": [
+    "facts",
+    "testable",
+    "opinions about what should be",
+    "always true"
+  ],
+  "correct": 2
+},
+{
+  "question": "Which is an opportunity cost example?",
+  "options": [
+    "Buying a phone",
+    "Studying instead of going out",
+    "Saving money",
+    "Earning salary"
+  ],
+  "correct": 1
+},
+{
+  "question": "Specialization leads to",
+  "options": [
+    "lower productivity",
+    "higher efficiency",
+    "no change",
+    "less trade"
+  ],
+  "correct": 1
+},
+{
+  "question": "A firm is a price taker in",
+  "options": [
+    "monopoly",
+    "perfect competition",
+    "oligopoly",
+    "cartel"
+  ],
+  "correct": 1
+},
+{
+  "question": "Total revenue equals",
+  "options": [
+    "price + quantity",
+    "price × quantity",
+    "cost × quantity",
+    "profit × quantity"
+  ],
+  "correct": 1
+},
+{
+  "question": "Marginal cost is",
+  "options": [
+    "total cost",
+    "change in total cost from producing one more unit",
+    "fixed cost",
+    "average cost"
+  ],
+  "correct": 1
+},
+{
+  "question": "Economic profit is",
+  "options": [
+    "revenue minus explicit cost only",
+    "revenue minus all costs (explicit + implicit)",
+    "revenue only",
+    "cost only"
+  ],
+  "correct": 1
+},
+{
+  "question": "A shutdown point occurs when",
+  "options": [
+    "price equals total cost",
+    "price is below AVC",
+    "price is above AVC",
+    "profit is positive"
+  ],
+  "correct": 1
+},
+{
+  "question": "Which of the following is a characteristic of scarcity?",
+  "options": [
+    "Unlimited resources",
+    "Limited resources with unlimited wants",
+    "No need for choice",
+    "No opportunity cost"
+  ],
+  "correct": 1
+},
+{
+  "question": "The basic economic problem is",
+  "options": [
+    "inflation",
+    "scarcity",
+    "taxation",
+    "employment"
+  ],
+  "correct": 1
+},
+{
+  "question": "Which is NOT a factor of production?",
+  "options": [
+    "Land",
+    "Labour",
+    "Money",
+    "Capital"
+  ],
+  "correct": 2
+},
+{
+  "question": "Capital refers to",
+  "options": [
+    "money only",
+    "machines and tools used in production",
+    "natural resources",
+    "human effort"
+  ],
+  "correct": 1
+},
+{
+  "question": "Labour refers to",
+  "options": [
+    "human effort used in production",
+    "machines used in production",
+    "land resources",
+    "money invested"
+  ],
+  "correct": 0
+},
+{
+  "question": "Land in economics includes",
+  "options": [
+    "only soil",
+    "natural resources",
+    "only farms",
+    "only buildings"
+  ],
+  "correct": 1
+},
+{
+  "question": "An increase in demand causes",
+  "options": [
+    "leftward shift",
+    "rightward shift",
+    "no change",
+    "vertical shift"
+  ],
+  "correct": 1
+},
+{
+  "question": "Law of demand states that",
+  "options": [
+    "price and demand move in same direction",
+    "price and demand move in opposite direction",
+    "supply and demand are equal",
+    "demand never changes"
+  ],
+  "correct": 1
+},
+{
+  "question": "Supply refers to",
+  "options": [
+    "willingness to buy",
+    "ability and willingness to sell",
+    "government control",
+    "tax system"
+  ],
+  "correct": 1
+},
+{
+  "question": "Law of supply states that",
+  "options": [
+    "price and supply move opposite",
+    "price and supply move same direction",
+    "demand affects supply only",
+    "supply is constant"
+  ],
+  "correct": 1
+},
+{
+  "question": "Market equilibrium occurs when",
+  "options": [
+    "demand equals supply",
+    "price is zero",
+    "demand is higher",
+    "supply is higher"
+  ],
+  "correct": 0
+},
+{
+  "question": "A shortage occurs when",
+  "options": [
+    "supply > demand",
+    "demand > supply",
+    "supply = demand",
+    "price is stable"
+  ],
+  "correct": 1
+},
+{
+  "question": "A surplus occurs when",
+  "options": [
+    "demand > supply",
+    "supply > demand",
+    "demand = supply",
+    "price increases"
+  ],
+  "correct": 1
+},
+{
+  "question": "Price elasticity of demand measures",
+  "options": [
+    "change in supply",
+    "responsiveness of demand to price change",
+    "government tax",
+    "production cost"
+  ],
+  "correct": 1
+},
+{
+  "question": "If demand is elastic, then",
+  "options": [
+    "small price change causes large demand change",
+    "no change in demand",
+    "demand is fixed",
+    "supply is affected"
+  ],
+  "correct": 0
+},
+{
+  "question": "Which market structure has a single seller?",
+  "options": [
+    "Perfect competition",
+    "Monopoly",
+    "Oligopoly",
+    "Monopolistic competition"
+  ],
+  "correct": 1
+},
+{
+  "question": "In perfect competition, firms are",
+  "options": [
+    "price makers",
+    "price takers",
+    "monopolies",
+    "cartels"
+  ],
+  "correct": 1
+},
+{
+  "question": "Oligopoly is a market with",
+  "options": [
+    "many buyers and sellers",
+    "one seller",
+    "few large firms",
+    "no competition"
+  ],
+  "correct": 2
+},
+{
+  "question": "Monopolistic competition involves",
+  "options": [
+    "identical products",
+    "differentiated products",
+    "government control",
+    "no sellers"
+  ],
+  "correct": 1
+},
+{
+  "question": "The main goal of a firm is to",
+  "options": [
+    "maximize profit",
+    "minimize demand",
+    "increase taxes",
+    "reduce supply"
+  ],
+  "correct": 0
+},
+{
+  "question": "Which of the following is a feature of a monopoly?",
+  "options": [
+    "Many sellers",
+    "Single seller",
+    "Perfect information",
+    "Free entry and exit"
+  ],
+  "correct": 1
+},
+{
+  "question": "A characteristic of perfect competition is",
+  "options": [
+    "product differentiation",
+    "single seller",
+    "homogeneous products",
+    "barriers to entry"
+  ],
+  "correct": 2
+},
+{
+  "question": "Which cost remains constant regardless of output?",
+  "options": [
+    "Variable cost",
+    "Marginal cost",
+    "Fixed cost",
+    "Total cost"
+  ],
+  "correct": 2
+},
+{
+  "question": "Variable cost changes with",
+  "options": [
+    "time only",
+    "output level",
+    "taxes",
+    "interest rates"
+  ],
+  "correct": 1
+},
+{
+  "question": "Average cost is",
+  "options": [
+    "total cost ÷ output",
+    "fixed cost only",
+    "variable cost only",
+    "profit ÷ output"
+  ],
+  "correct": 0
+},
+{
+  "question": "Marginal revenue is",
+  "options": [
+    "total revenue",
+    "revenue from selling one more unit",
+    "cost of production",
+    "average revenue"
+  ],
+  "correct": 1
+},
+{
+  "question": "Demand curve usually slopes",
+  "options": [
+    "upward",
+    "downward",
+    "vertical",
+    "horizontal"
+  ],
+  "correct": 1
+},
+{
+  "question": "Supply curve usually slopes",
+  "options": [
+    "downward",
+    "upward",
+    "vertical",
+    "randomly"
+  ],
+  "correct": 1
+},
+{
+  "question": "When price increases, quantity demanded",
+  "options": [
+    "increases",
+    "decreases",
+    "stays constant",
+    "becomes zero"
+  ],
+  "correct": 1
+},
+{
+  "question": "A tax imposed on goods is called",
+  "options": [
+    "subsidy",
+    "tariff",
+    "tax",
+    "price control"
+  ],
+  "correct": 2
+},
+{
+  "question": "Subsidy is",
+  "options": [
+    "government payment to producers",
+    "tax on goods",
+    "price ceiling",
+    "price floor"
+  ],
+  "correct": 0
+},
+{
+  "question": "Price ceiling is",
+  "options": [
+    "minimum price",
+    "maximum legal price",
+    "market equilibrium",
+    "invisible price"
+  ],
+  "correct": 1
+},
+{
+  "question": "Price floor is",
+  "options": [
+    "maximum price",
+    "minimum legal price",
+    "market price",
+    "zero price"
+  ],
+  "correct": 1
+},
+{
+  "question": "Inflation means",
+  "options": [
+    "fall in prices",
+    "rise in general price level",
+    "increase in production",
+    "decrease in population"
+  ],
+  "correct": 1
+},
+{
+  "question": "Deflation means",
+  "options": [
+    "rise in prices",
+    "fall in prices",
+    "economic growth",
+    "tax increase"
+  ],
+  "correct": 1
+},
+{
+  "question": "Unemployment refers to",
+  "options": [
+    "people not willing to work",
+    "people actively seeking but unable to find jobs",
+    "students in school",
+    "retired workers"
+  ],
+  "correct": 1
+},
+{
+  "question": "GDP stands for",
+  "options": [
+    "General Domestic Product",
+    "Gross Domestic Product",
+    "Global Demand Product",
+    "Government Domestic Plan"
+  ],
+  "correct": 1
+},
+{
+  "question": "GDP measures",
+  "options": [
+    "population",
+    "total value of goods and services produced",
+    "government spending only",
+    "tax revenue"
+  ],
+  "correct": 1
+},
+{
+  "question": "Inflation is measured using",
+  "options": [
+    "GDP",
+    "CPI",
+    "PPP",
+    "HDI"
+  ],
+  "correct": 1
+},
+{
+  "question": "CPI stands for",
+  "options": [
+    "Consumer Price Index",
+    "Central Price Index",
+    "Current Product Index",
+    "Cost Price Index"
+  ],
+  "correct": 0
+},
+{
+  "question": "Money is mainly used as",
+  "options": [
+    "a store of value",
+    "a medium of exchange",
+    "a tax tool",
+    "a production factor"
+  ],
+  "correct": 1
+},
+{
+  "question": "Banking system includes",
+  "options": [
+    "only central bank",
+    "only commercial banks",
+    "central and commercial banks",
+    "only microfinance"
+  ],
+  "correct": 2
+},
+{
+  "question": "Central bank controls",
+  "options": [
+    "movies",
+    "monetary policy",
+    "sports",
+    "education"
+  ],
+  "correct": 1
+},
+{
+  "question": "Interest rate is",
+  "options": [
+    "cost of borrowing money",
+    "tax rate",
+    "inflation rate",
+    "exchange rate"
+  ],
+  "correct": 0
+},
+{
+  "question": "Exports are",
+  "options": [
+    "goods bought from abroad",
+    "goods sold abroad",
+    "taxes",
+    "subsidies"
+  ],
+  "correct": 1
+},
+{
+  "question": "Imports are",
+  "options": [
+    "goods sold abroad",
+    "goods bought from abroad",
+    "local goods",
+    "services only"
+  ],
+  "correct": 1
+},
+{
+  "question": "Balance of trade refers to",
+  "options": [
+    "difference between exports and imports",
+    "tax system",
+    "inflation rate",
+    "GDP growth"
+  ],
+  "correct": 0
+},
+{
+  "question": "A budget surplus occurs when",
+  "options": [
+    "spending > revenue",
+    "revenue > spending",
+    "imports > exports",
+    "tax = zero"
+  ],
+  "correct": 1
+},
+{
+  "question": "A budget deficit occurs when",
+  "options": [
+    "revenue > spending",
+    "spending > revenue",
+    "tax is high",
+    "exports increase"
+  ],
+  "correct": 1
+},
+{
+  "question": "Fiscal policy involves",
+  "options": [
+    "government spending and taxation",
+    "money printing only",
+    "trade agreements",
+    "bank loans"
+  ],
+  "correct": 0
+},
+{
+  "question": "Monetary policy is controlled by",
+  "options": [
+    "government parliament",
+    "central bank",
+    "schools",
+    "firms"
+  ],
+  "correct": 1
+},
+{
+  "question": "Economic growth means",
+  "options": [
+    "decline in GDP",
+    "increase in GDP over time",
+    "increase in unemployment",
+    "fall in production"
+  ],
+  "correct": 1
+},
+{
+  "question": "Development differs from growth because",
+  "options": [
+    "it includes quality of life",
+    "it ignores GDP",
+    "it focuses only on inflation",
+    "it is the same thing"
+  ],
+  "correct": 0
+},
+{
+  "question": "HDI measures",
+  "options": [
+    "income only",
+    "human development level",
+    "tax collection",
+    "trade balance"
+  ],
+  "correct": 1
+},
+{
+  "question": "A market economy is driven by",
+  "options": [
+    "government only",
+    "price mechanism",
+    "military control",
+    "foreign aid"
+  ],
+  "correct": 1
+},
+{
+  "question": "Command economy is controlled by",
+  "options": [
+    "private firms",
+    "government",
+    "consumers",
+    "foreign investors"
+  ],
+  "correct": 1
+},
+{
+  "question": "In economics, rational behaviour means",
+  "options": [
+    "random choices",
+    "maximizing benefit with limited resources",
+    "spending all income",
+    "avoiding decisions"
+  ],
+  "correct": 1
+},
+{
+  "question": "Demand increases when",
+  "options": [
+    "price rises",
+    "price falls",
+    "supply decreases",
+    "tax increases"
+  ],
+  "correct": 1
+},
+{
+  "question": "Supply increases when",
+  "options": [
+    "price falls",
+    "price rises",
+    "demand falls",
+    "tax increases"
+  ],
+  "correct": 1
+},
+{
+  "question": "A monopoly firm can influence price because",
+  "options": [
+    "there are many sellers",
+    "it is the only seller",
+    "it has no costs",
+    "demand is zero"
+  ],
+  "correct": 1
+},
+{
+  "question": "Oligopoly firms are characterized by",
+  "options": [
+    "many small firms",
+    "few large firms",
+    "single firm",
+    "no competition"
+  ],
+  "correct": 1
+},
+{
+  "question": "Monopolistic competition involves",
+  "options": [
+    "identical products",
+    "differentiated products",
+    "no products",
+    "government monopoly"
+  ],
+  "correct": 1
+},
+{
+  "question": "A market structure with free entry and exit is",
+  "options": [
+    "monopoly",
+    "perfect competition",
+    "oligopoly",
+    "cartel"
+  ],
+  "correct": 1
+},
+{
+  "question": "Barriers to entry are common in",
+  "options": [
+    "perfect competition",
+    "monopoly",
+    "agriculture",
+    "street vending"
+  ],
+  "correct": 1
+},
+{
+  "question": "Average revenue is equal to",
+  "options": [
+    "total revenue ÷ quantity",
+    "total cost ÷ quantity",
+    "profit ÷ quantity",
+    "fixed cost"
+  ],
+  "correct": 0
+},
+{
+  "question": "Profit is",
+  "options": [
+    "revenue minus cost",
+    "cost minus revenue",
+    "tax minus revenue",
+    "price minus demand"
+  ],
+  "correct": 0
+},
+{
+  "question": "A firm breaks even when",
+  "options": [
+    "profit is positive",
+    "revenue equals cost",
+    "revenue is zero",
+    "cost is zero"
+  ],
+  "correct": 1
+},
+{
+  "question": "Fixed costs include",
+  "options": [
+    "raw materials",
+    "rent",
+    "wages per unit",
+    "electricity per unit"
+  ],
+  "correct": 1
+},
+{
+  "question": "Variable costs include",
+  "options": [
+    "rent",
+    "machinery cost",
+    "raw materials",
+    "building cost"
+  ],
+  "correct": 2
+},
+{
+  "question": "The law of diminishing returns states",
+  "options": [
+    "output always increases",
+    "extra input eventually yields smaller output increases",
+    "cost is zero",
+    "demand increases"
+  ],
+  "correct": 1
+},
+{
+  "question": "Marginal product is",
+  "options": [
+    "total output",
+    "extra output from one more unit of input",
+    "total cost",
+    "fixed input"
+  ],
+  "correct": 1
+},
+{
+  "question": "Elastic demand means",
+  "options": [
+    "price change has little effect",
+    "price change has large effect",
+    "no demand",
+    "fixed demand"
+  ],
+  "correct": 1
+},
+{
+  "question": "Inelastic demand means",
+  "options": [
+    "large response to price change",
+    "small response to price change",
+    "no supply",
+    "perfect competition"
+  ],
+  "correct": 1
+},
+{
+  "question": "A normal good is one whose demand",
+  "options": [
+    "falls when income rises",
+    "rises when income rises",
+    "never changes",
+    "is fixed"
+  ],
+  "correct": 1
+},
+{
+  "question": "Inferior goods are those whose demand",
+  "options": [
+    "increases when income increases",
+    "decreases when income increases",
+    "is constant",
+    "has no price"
+  ],
+  "correct": 1
+},
+{
+  "question": "Substitute goods are",
+  "options": [
+    "used together",
+    "replacing each other",
+    "free goods",
+    "government goods"
+  ],
+  "correct": 1
+},
+{
+  "question": "Complementary goods are",
+  "options": [
+    "used together",
+    "replacing each other",
+    "unrelated",
+    "illegal goods"
+  ],
+  "correct": 0
+},
+{
+  "question": "An increase in demand shifts the curve",
+  "options": [
+    "left",
+    "right",
+    "down",
+    "vertical"
+  ],
+  "correct": 1
+},
+{
+  "question": "A decrease in supply shifts the curve",
+  "options": [
+    "right",
+    "left",
+    "upward",
+    "no change"
+  ],
+  "correct": 1
+},
+{
+  "question": "Equilibrium price is where",
+  "options": [
+    "demand equals supply",
+    "price is zero",
+    "supply is zero",
+    "demand is zero"
+  ],
+  "correct": 0
+},
+{
+  "question": "Price controls are used to",
+  "options": [
+    "remove all markets",
+    "stabilize prices",
+    "increase inflation",
+    "remove taxes"
+  ],
+  "correct": 1
+},
+{
+  "question": "Inflation reduces",
+  "options": [
+    "purchasing power",
+    "population",
+    "supply",
+    "exports"
+  ],
+  "correct": 0
+},
+{
+  "question": "Deflation increases",
+  "options": [
+    "prices",
+    "purchasing power",
+    "taxes",
+    "imports"
+  ],
+  "correct": 1
+},
+{
+  "question": "Unemployment rate is",
+  "options": [
+    "total population without jobs",
+    "percentage of labour force unemployed",
+    "GDP growth rate",
+    "inflation rate"
+  ],
+  "correct": 1
+},
+{
+  "question": "GDP excludes",
+  "options": [
+    "final goods",
+    "intermediate goods",
+    "services",
+    "exports"
+  ],
+  "correct": 1
+},
+{
+  "question": "Nominal GDP is",
+  "options": [
+    "GDP at current prices",
+    "GDP adjusted for inflation",
+    "real output only",
+    "tax revenue"
+  ],
+  "correct": 0
+},
+{
+  "question": "Real GDP is",
+  "options": [
+    "GDP at current prices",
+    "GDP adjusted for inflation",
+    "tax income",
+    "exports only"
+  ],
+  "correct": 1
+},
+{
+  "question": "Money supply is controlled by",
+  "options": [
+    "firms",
+    "central bank",
+    "consumers",
+    "foreign banks"
+  ],
+  "correct": 1
+},
+{
+  "question": "Fiscal policy affects",
+  "options": [
+    "government spending and taxes",
+    "only exports",
+    "only imports",
+    "only savings"
+  ],
+  "correct": 0
+},
+{
+  "question": "Monetary policy affects",
+  "options": [
+    "money supply and interest rates",
+    "only taxes",
+    "only trade",
+    "only wages"
+  ],
+  "correct": 0
+},
+{
+  "question": "Exports increase when",
+  "options": [
+    "domestic prices rise",
+    "foreign demand rises",
+    "tax increases",
+    "interest rises"
+  ],
+  "correct": 1
+},
+{
+  "question": "Imports increase when",
+  "options": [
+    "domestic demand increases",
+    "foreign demand increases",
+    "tax decreases",
+    "inflation decreases"
+  ],
+  "correct": 0
+},
+{
+  "question": "Balance of payments records",
+  "options": [
+    "only exports",
+    "all international transactions",
+    "only imports",
+    "only taxes"
+  ],
+  "correct": 1
+},
+{
+  "question": "Economic development includes",
+  "options": [
+    "only GDP growth",
+    "income distribution and welfare",
+    "only inflation",
+    "only exports"
+  ],
+  "correct": 1
+},
+{
+  "question": "A budget deficit is financed by",
+  "options": [
+    "tax cuts",
+    "borrowing",
+    "exports",
+    "imports"
+  ],
+  "correct": 1
+},
+{
+  "question": "A surplus occurs when",
+  "options": [
+    "spending exceeds revenue",
+    "revenue exceeds spending",
+    "imports exceed exports",
+    "inflation rises"
+  ],
+  "correct": 1
+},
+{
+  "question": "Opportunity cost increases when",
+  "options": [
+    "choices are unlimited",
+    "resources are scarce",
+    "prices fall",
+    "demand is zero"
+  ],
+  "correct": 1
+},
+{
+  "question": "Economic growth is best measured by",
+  "options": [
+    "inflation rate",
+    "increase in real GDP",
+    "tax rate",
+    "population growth only"
+  ],
+  "correct": 1
+},
+{
+  "question": "Human capital refers to",
+  "options": [
+    "machines used in production",
+    "skills and knowledge of workers",
+    "natural resources",
+    "money supply"
+  ],
+  "correct": 1
+},
+{
+  "question": "Physical capital includes",
+  "options": [
+    "education level",
+    "tools and machinery",
+    "labour skills",
+    "government policies"
+  ],
+  "correct": 1
+},
+{
+  "question": "Entrepreneurship involves",
+  "options": [
+    "risk-taking in business",
+    "only saving money",
+    "only labour work",
+    "government control"
+  ],
+  "correct": 0
+},
+{
+  "question": "Inflation is harmful because it",
+  "options": [
+    "increases purchasing power",
+    "reduces purchasing power",
+    "increases exports only",
+    "reduces population"
+  ],
+  "correct": 1
+},
+{
+  "question": "A trade deficit means",
+  "options": [
+    "exports > imports",
+    "imports > exports",
+    "no trade exists",
+    "taxes are zero"
+  ],
+  "correct": 1
+},
+{
+  "question": "A trade surplus means",
+  "options": [
+    "imports > exports",
+    "exports > imports",
+    "no production",
+    "inflation increases"
+  ],
+  "correct": 1
+},
+{
+  "question": "Money serves as",
+  "options": [
+    "only a store of value",
+    "medium of exchange",
+    "only government tool",
+    "only tax system"
+  ],
+  "correct": 1
+},
+{
+  "question": "The central bank regulates",
+  "options": [
+    "schools",
+    "money supply",
+    "agriculture",
+    "sports"
+  ],
+  "correct": 1
+},
+{
+  "question": "Interest rate increase leads to",
+  "options": [
+    "more borrowing",
+    "less borrowing",
+    "no effect",
+    "more inflation always"
+  ],
+  "correct": 1
+},
+{
+  "question": "A tariff is",
+  "options": [
+    "tax on imports",
+    "subsidy on exports",
+    "price control",
+    "income tax"
+  ],
+  "correct": 0
+},
+{
+  "question": "Subsidies are given to",
+  "options": [
+    "consumers only",
+    "producers to reduce cost",
+    "foreign firms only",
+    "banks only"
+  ],
+  "correct": 1
+},
+{
+  "question": "Demand-pull inflation occurs when",
+  "options": [
+    "demand exceeds supply",
+    "supply exceeds demand",
+    "tax decreases",
+    "exports fall"
+  ],
+  "correct": 0
+},
+{
+  "question": "Cost-push inflation occurs when",
+  "options": [
+    "production costs rise",
+    "demand falls",
+    "exports increase",
+    "tax decreases"
+  ],
+  "correct": 0
+},
+{
+  "question": "Economic efficiency means",
+  "options": [
+    "wasting resources",
+    "maximizing output from resources",
+    "reducing production",
+    "increasing unemployment"
+  ],
+  "correct": 1
+},
+{
+  "question": "Scarcity leads to",
+  "options": [
+    "no need for choice",
+    "choice making",
+    "unlimited production",
+    "no cost"
+  ],
+  "correct": 1
+},
+{
+  "question": "The basic economic agents are",
+  "options": [
+    "firms only",
+    "households, firms, government",
+    "banks only",
+    "foreigners only"
+  ],
+  "correct": 1
+},
+{
+  "question": "Households mainly",
+  "options": [
+    "produce goods",
+    "consume goods",
+    "set taxes",
+    "control inflation"
+  ],
+  "correct": 1
+},
+{
+  "question": "Firms mainly",
+  "options": [
+    "consume goods",
+    "produce goods and services",
+    "control government",
+    "print money"
+  ],
+  "correct": 1
+},
+{
+  "question": "Government role in economy includes",
+  "options": [
+    "no involvement",
+    "regulation and taxation",
+    "only production",
+    "only consumption"
+  ],
+  "correct": 1
+}
+
+
+
+]
+    // ---------- state ----------
+    let currentSlide = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let answerLocked = new Array(questions.length).fill(false);
+
+    // DOM elements
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+
+    // update score
+    function updateScore() {
+      let correctCount = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answerLocked[i] && userAnswers[i] === questions[i].correct) {
+          correctCount++;
+        }
+      }
+      scoreDisplay.textContent = `${correctCount}/${questions.length}`;
+    }
+
+    // render current slide
+    function renderSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+
+      questionEl.textContent = q.question;
+      const locked = answerLocked[currentSlide];
+      const selectedIdx = userAnswers[currentSlide];
+      const correctIdx = q.correct;
+
+      let htmlStr = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (locked) {
+          if (idx === correctIdx) {
+            btnClass += ' correct-highlight';
+          }
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) {
+            btnClass += ' wrong-highlight';
+          }
+        }
+        const disabledAttr = locked ? 'disabled' : '';
+        htmlStr += `<button class="${btnClass}" data-opt-index="${idx}" ${disabledAttr}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = htmlStr;
+
+      // feedback
+      if (locked && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) {
+          feedbackTextEl.innerHTML = `<span class="green-feedback">✅ correct!</span>`;
+        } else {
+          const correctAnswerText = q.options[correctIdx];
+          feedbackTextEl.innerHTML = `<span class="red-feedback">❌ wrong. correct: </span><span class="green-feedback">"${correctAnswerText}"</span>`;
+        }
+      } else {
+        feedbackTextEl.textContent = '⚡ choose an option';
+      }
+
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+
+    // click handler
+    function onOptionClick(e) {
+      const target = e.target.closest('.option-btn');
+      if (!target || target.disabled) return;
+      if (answerLocked[currentSlide]) return;
+
+      const idx = parseInt(target.dataset.optIndex, 10);
+      answerLocked[currentSlide] = true;
+      userAnswers[currentSlide] = idx;
+
+      renderSlide();
+      updateScore();
+    }
+
+    function goToPrev() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        renderSlide();
+      }
+    }
+
+    function goToNext() {
+      if (currentSlide < questions.length - 1) {
+        currentSlide++;
+        renderSlide();
+      }
+    }
+
+    function resetQuiz() {
+      currentSlide = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      answerLocked = new Array(questions.length).fill(false);
+      renderSlide();
+      updateScore();
+    }
+
+    // attach events
+    optionsContainer.addEventListener('click', onOptionClick);
+    prevBtn.addEventListener('click', goToPrev);
+    nextBtn.addEventListener('click', goToNext);
+    resetBtn.addEventListener('click', resetQuiz);
+
+    // initial render
+    if (questions.length) {
+      renderSlide();
+      updateScore();
+    } else {
+      questionEl.textContent = '❗ No questions.';
+    }
+  })();
+</script>
+</body>
+</html>
