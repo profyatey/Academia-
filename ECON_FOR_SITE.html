@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>ECONS 101 PASCO • Progressive Quiz</title>
+  <style>
+    
+  * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #e4f0fd;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .quiz-container {
+    max-width: 950px;
+    width: 100%;
+    background: rgba(235, 247, 255, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 2.5rem;
+    box-shadow: 0 20px 35px rgba(100, 150, 200, 0.2), 0 8px 20px rgba(70, 120, 180, 0.15);
+    padding: 1.8rem 1.5rem 2rem;
+    border: 1px solid #c6e0ff;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px dashed #b8d6ff;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(130deg, #2c6288, #498a8d);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge {
+    background: #d4e9ff;
+    border-radius: 60px;
+    padding: 0.4rem 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2f5575;
+    border: 1px solid #9fc9ff;
+    box-shadow: inset 0 1px 4px #f0faff, 0 3px 0 #9cb9d9;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge span {
+    background: #bed9ff;
+    padding: 0.2rem 0.9rem;
+    border-radius: 40px;
+    color: #1a3e5c;
+    font-size: 1.4rem;
+    line-height: 1;
+    border: 1px solid #8ab9f0;
+  }
+
+  .slide-area {
+    background: #f1faff;
+    border-radius: 2rem;
+    padding: 1.8rem 1.5rem 1.5rem;
+    margin: 1.2rem 0 1rem;
+    border: 1px solid #c5ddff;
+    box-shadow: inset 0 4px 8px #e4f2ff, 0 6px 0 #b0cbea;
+  }
+
+  .slide-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1a4463;
+    text-shadow: 0 1px 2px #e4f0ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .option-btn {
+    background: #e6f2ff;
+    border: 2px solid #b6d5ff;
+    border-radius: 50px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-align: left;
+    color: #1b3a54;
+    cursor: pointer;
+    transition: 0.12s linear;
+    box-shadow: 0 5px 0 #9cb9dc, 0 3px 10px rgba(120, 160, 210, 0.3);
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: #d5e9ff;
+    border-color: #88b8f0;
+    transform: scale(1.01);
+  }
+
+  .option-btn.correct-highlight {
+    background: #c8f0c8;
+    border-color: #479c47;
+    color: #155f1b;
+    box-shadow: 0 0 10px #a0e0a0, 0 5px 0 #3a854a;
+  }
+
+  .option-btn.wrong-highlight {
+    background: #ffe0e0;
+    border-color: #ff9494;
+    color: #a13131;
+    box-shadow: 0 0 10px #ffb5b5, 0 5px 0 #c75c5c;
+  }
+
+  .option-btn:disabled {
+    opacity: 0.95;
+    cursor: default;
+    filter: saturate(0.7);
+    transform: none;
+  }
+
+  .feedback-line {
+    min-height: 3rem;
+    margin: 1.4rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding: 0.8rem 1.4rem;
+    border-radius: 50px;
+    background: #e1f0ff;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-left: 8px solid #9ac2f0;
+    color: #234d6b;
+  }
+
+  .green-feedback { color: #1b7a3b; font-weight: 600; }
+  .red-feedback { color: #bc2c2c; font-weight: 600; }
+
+  .nav-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+  }
+
+  button.nav-btn {
+    background: #cde3ff;
+    border: none;
+    border-radius: 3rem;
+    padding: 0.7rem 1.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f4a70;
+    border-bottom: 4px solid #7fa3c7;
+    letter-spacing: 0.02rem;
+    cursor: pointer;
+    transition: 0.1s ease;
+    box-shadow: 0 5px 10px rgba(90, 130, 180, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  button.nav-btn:hover:not(:disabled) {
+    background: #b9d7ff;
+    border-bottom-color: #6087b0;
+    transform: translateY(-2px);
+  }
+
+  button.nav-btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+    filter: grayscale(0.3);
+    border-bottom-color: #9bb2cc;
+    transform: none;
+  }
+
+  .slide-indicator {
+    font-size: 1.2rem;
+    background: #e2f0ff;
+    padding: 0.5rem 1.4rem;
+    border-radius: 60px;
+    color: #26557c;
+    border: 1px solid #9ec3ec;
+    font-weight: 600;
+  }
+
+  .reset-btn {
+    background: #c2dcff;
+    border-bottom-color: #6f94bc;
+    padding: 0.7rem 1.6rem;
+  }
+
+  .footer-credit {
+    text-align: center;
+    color: #6183a3;
+    margin-top: 1.8rem;
+    font-size: 0.9rem;
+    border-top: 1px dashed #b6d3f2;
+    padding-top: 0.8rem;
+  }
+
+  @media (max-width: 550px) {
+    h1 { font-size: 1.7rem; }
+    .score-badge { font-size: 1rem; padding: 0.3rem 1rem; }
+    .score-badge span { font-size: 1.2rem; padding: 0.1rem 0.7rem; }
+    .slide-title { font-size: 1.35rem; }
+    .option-btn { font-size: 1rem; padding: 0.7rem 1.2rem; }
+    .feedback-line { font-size: 1rem; padding: 0.6rem 1rem; }
+    button.nav-btn { font-size: 1rem; padding: 0.6rem 1.3rem; }
+    .slide-indicator { font-size: 1rem; padding: 0.4rem 1rem; }
+    .quiz-container { padding: 1.2rem 1rem 1.5rem; }
+  }
+
+  @media (max-width: 450px) {
+    .nav-controls { justify-content: center; }
+    .header-row { flex-direction: column; align-items: flex-start; }
+  }
+  </style>
+</head>
+<body>
+<div class="quiz-container">
+  <div class="header-row">
+    <h1>📈 ECONS101 Pasco</h1>
+    <div class="score-badge">
+      🏆 SCORE <span id="scoreDisplay">0/160</span>
+    </div>
+  </div>
+
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading concepts...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💡</span> <span id="feedbackText">tap any answer → instant feedback & unlimited progress</span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 160</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ FULL RESET</button>
+  </div>
+  <div class="footer-credit">⚡ Developed with ❤️ by @Cimon - THE TECH GUY • select & move forward – no answer lock reset needed</div>
+</div>
+
+<script>
+  (function() {
+    // ---------- ECONS 101 DYNAMIC QUESTION BANK (original raw format: q, opts, correct) ----------
+    const rawBank = [
+      { q: "Economics is", opts: ["the narrow study of how to make money in financial markets", "the broad study of how to allocate unlimited resources to satisfy limited uses", "the broad study of how to allocate limited resources to satisfy unlimited wants", "the narrow study of using stocks and bonds to their maximum potential"], correct: 2 },
+      { q: "Economics deals with how", opts: ["individuals make decisions to use scarce resources in order to satisfy unlimited wants", "to run a business", "individuals become rich", "society eliminates scarcity"], correct: 0 },
+      { q: "Microeconomics is the study of", opts: ["the overall economy", "individual households and firms", "government policies only", "international trade only"], correct: 1 },
+      { q: "Scarcity means", opts: ["resources are unlimited", "wants are limited", "resources are limited but wants are unlimited", "prices are always high"], correct: 2 },
+      { q: "Opportunity cost is", opts: ["money spent on goods", "benefit of the chosen option", "value of the next best alternative forgone", "total production cost"], correct: 2 },
+      { q: "A production possibility frontier shows", opts: ["consumer demand", "maximum combinations of goods that can be produced", "market prices", "income levels"], correct: 1 },
+      { q: "Points inside the PPF are", opts: ["efficient", "inefficient", "unattainable", "optimal"], correct: 1 },
+      { q: "Points on the PPF are", opts: ["inefficient", "efficient", "impossible", "wasteful"], correct: 1 },
+      { q: "Economic growth is shown by", opts: ["movement along PPF", "shift inward of PPF", "shift outward of PPF", "no change"], correct: 2 },
+      { q: "A mixed economy is one that", opts: ["uses only market system", "uses only command system", "uses both market and government systems", "has no economy"], correct: 2 },
+      { q: "A model in economics is used to", opts: ["confuse students", "simplify reality", "increase complexity", "replace real life"], correct: 1 },
+      { q: "A positive statement is", opts: ["what should be", "what is testable and factual", "an opinion", "a recommendation"], correct: 1 },
+      { q: "Normative statements are", opts: ["facts", "testable", "opinions about what should be", "always true"], correct: 2 },
+      { q: "Which is an opportunity cost example?", opts: ["Buying a phone", "Studying instead of going out", "Saving money", "Earning salary"], correct: 1 },
+      { q: "Specialization leads to", opts: ["lower productivity", "higher efficiency", "no change", "less trade"], correct: 1 },
+      { q: "A firm is a price taker in", opts: ["monopoly", "perfect competition", "oligopoly", "cartel"], correct: 1 },
+      { q: "Total revenue equals", opts: ["price + quantity", "price × quantity", "cost × quantity", "profit × quantity"], correct: 1 },
+      { q: "Marginal cost is", opts: ["total cost", "change in total cost from producing one more unit", "fixed cost", "average cost"], correct: 1 },
+      { q: "Economic profit is", opts: ["revenue minus explicit cost only", "revenue minus all costs (explicit + implicit)", "revenue only", "cost only"], correct: 1 },
+      { q: "A shutdown point occurs when", opts: ["price equals total cost", "price is below AVC", "price is above AVC", "profit is positive"], correct: 1 },
+      { q: "Which is a characteristic of scarcity?", opts: ["Unlimited resources", "Limited resources with unlimited wants", "No need for choice", "No opportunity cost"], correct: 1 },
+      { q: "The basic economic problem is", opts: ["inflation", "scarcity", "taxation", "employment"], correct: 1 },
+      { q: "Which is NOT a factor of production?", opts: ["Land", "Labour", "Money", "Capital"], correct: 2 },
+      { q: "Capital refers to", opts: ["money only", "machines and tools used in production", "natural resources", "human effort"], correct: 1 },
+      { q: "Labour refers to", opts: ["human effort used in production", "machines used in production", "land resources", "money invested"], correct: 0 },
+      { q: "Land in economics includes", opts: ["only soil", "natural resources", "only farms", "only buildings"], correct: 1 },
+      { q: "An increase in demand causes", opts: ["leftward shift", "rightward shift", "no change", "vertical shift"], correct: 1 },
+      { q: "Law of demand states that", opts: ["price and demand move in same direction", "price and demand move in opposite direction", "supply and demand are equal", "demand never changes"], correct: 1 },
+      { q: "Supply refers to", opts: ["willingness to buy", "ability and willingness to sell", "government control", "tax system"], correct: 1 },
+      { q: "Law of supply states that", opts: ["price and supply move opposite", "price and supply move same direction", "demand affects supply only", "supply is constant"], correct: 1 },
+      { q: "Market equilibrium occurs when", opts: ["demand equals supply", "price is zero", "demand is higher", "supply is higher"], correct: 0 },
+      { q: "A shortage occurs when", opts: ["supply > demand", "demand > supply", "supply = demand", "price is stable"], correct: 1 },
+      { q: "A surplus occurs when", opts: ["demand > supply", "supply > demand", "demand = supply", "price increases"], correct: 1 },
+      { q: "Price elasticity of demand measures", opts: ["change in supply", "responsiveness of demand to price change", "government tax", "production cost"], correct: 1 },
+      { q: "If demand is elastic, then", opts: ["small price change causes large demand change", "no change in demand", "demand is fixed", "supply is affected"], correct: 0 },
+      { q: "Which market structure has a single seller?", opts: ["Perfect competition", "Monopoly", "Oligopoly", "Monopolistic competition"], correct: 1 },
+      { q: "In perfect competition, firms are", opts: ["price makers", "price takers", "monopolies", "cartels"], correct: 1 },
+      { q: "Oligopoly is a market with", opts: ["many buyers and sellers", "one seller", "few large firms", "no competition"], correct: 2 },
+      { q: "Monopolistic competition involves", opts: ["identical products", "differentiated products", "government control", "no sellers"], correct: 1 },
+      { q: "The main goal of a firm is to", opts: ["maximize profit", "minimize demand", "increase taxes", "reduce supply"], correct: 0 },
+      { q: "Feature of a monopoly?", opts: ["Many sellers", "Single seller", "Perfect information", "Free entry and exit"], correct: 1 },
+      { q: "Perfect competition characteristic", opts: ["product differentiation", "single seller", "homogeneous products", "barriers to entry"], correct: 2 },
+      { q: "Which cost remains constant regardless of output?", opts: ["Variable cost", "Marginal cost", "Fixed cost", "Total cost"], correct: 2 },
+      { q: "Variable cost changes with", opts: ["time only", "output level", "taxes", "interest rates"], correct: 1 },
+      { q: "Average cost is", opts: ["total cost ÷ output", "fixed cost only", "variable cost only", "profit ÷ output"], correct: 0 },
+      { q: "Marginal revenue is", opts: ["total revenue", "revenue from selling one more unit", "cost of production", "average revenue"], correct: 1 },
+      { q: "Demand curve usually slopes", opts: ["upward", "downward", "vertical", "horizontal"], correct: 1 },
+      { q: "Supply curve usually slopes", opts: ["downward", "upward", "vertical", "randomly"], correct: 1 },
+      { q: "When price increases, quantity demanded", opts: ["increases", "decreases", "stays constant", "becomes zero"], correct: 1 },
+      { q: "A tax imposed on goods is called", opts: ["subsidy", "tariff", "tax", "price control"], correct: 2 },
+      { q: "Subsidy is", opts: ["government payment to producers", "tax on goods", "price ceiling", "price floor"], correct: 0 },
+      { q: "Price ceiling is", opts: ["minimum price", "maximum legal price", "market equilibrium", "invisible price"], correct: 1 },
+      { q: "Price floor is", opts: ["maximum price", "minimum legal price", "market price", "zero price"], correct: 1 },
+      { q: "Inflation means", opts: ["fall in prices", "rise in general price level", "increase in production", "decrease in population"], correct: 1 },
+      { q: "Deflation means", opts: ["rise in prices", "fall in prices", "economic growth", "tax increase"], correct: 1 },
+      { q: "Unemployment refers to", opts: ["people not willing to work", "people actively seeking but unable to find jobs", "students in school", "retired workers"], correct: 1 },
+      { q: "GDP stands for", opts: ["General Domestic Product", "Gross Domestic Product", "Global Demand Product", "Government Domestic Plan"], correct: 1 },
+      { q: "GDP measures", opts: ["population", "total value of goods and services produced", "government spending only", "tax revenue"], correct: 1 },
+      { q: "Inflation is measured using", opts: ["GDP", "CPI", "PPP", "HDI"], correct: 1 },
+      { q: "CPI stands for", opts: ["Consumer Price Index", "Central Price Index", "Current Product Index", "Cost Price Index"], correct: 0 },
+      { q: "Money is mainly used as", opts: ["a store of value", "a medium of exchange", "a tax tool", "a production factor"], correct: 1 },
+      { q: "Banking system includes", opts: ["only central bank", "only commercial banks", "central and commercial banks", "only microfinance"], correct: 2 },
+      { q: "Central bank controls", opts: ["movies", "monetary policy", "sports", "education"], correct: 1 },
+      { q: "Interest rate is", opts: ["cost of borrowing money", "tax rate", "inflation rate", "exchange rate"], correct: 0 },
+      { q: "Exports are", opts: ["goods bought from abroad", "goods sold abroad", "taxes", "subsidies"], correct: 1 },
+      { q: "Imports are", opts: ["goods sold abroad", "goods bought from abroad", "local goods", "services only"], correct: 1 },
+      { q: "Balance of trade refers to", opts: ["difference between exports and imports", "tax system", "inflation rate", "GDP growth"], correct: 0 },
+      { q: "Budget surplus occurs when", opts: ["spending > revenue", "revenue > spending", "imports > exports", "tax = zero"], correct: 1 },
+      { q: "Budget deficit occurs when", opts: ["revenue > spending", "spending > revenue", "tax is high", "exports increase"], correct: 1 },
+      { q: "Fiscal policy involves", opts: ["government spending and taxation", "money printing only", "trade agreements", "bank loans"], correct: 0 },
+      { q: "Monetary policy is controlled by", opts: ["government parliament", "central bank", "schools", "firms"], correct: 1 },
+      { q: "Economic growth means", opts: ["decline in GDP", "increase in GDP over time", "increase in unemployment", "fall in production"], correct: 1 },
+      { q: "Development differs from growth because", opts: ["it includes quality of life", "it ignores GDP", "it focuses only on inflation", "it is the same thing"], correct: 0 },
+      { q: "HDI measures", opts: ["income only", "human development level", "tax collection", "trade balance"], correct: 1 },
+      { q: "Market economy driven by", opts: ["government only", "price mechanism", "military control", "foreign aid"], correct: 1 },
+      { q: "Command economy controlled by", opts: ["private firms", "government", "consumers", "foreign investors"], correct: 1 },
+      { q: "Rational behaviour means", opts: ["random choices", "maximizing benefit with limited resources", "spending all income", "avoiding decisions"], correct: 1 },
+      { q: "Monopoly can influence price because", opts: ["many sellers", "it is the only seller", "no costs", "demand is zero"], correct: 1 },
+      { q: "Fixed costs include", opts: ["raw materials", "rent", "wages per unit", "electricity per unit"], correct: 1 },
+      { q: "Law of diminishing returns states", opts: ["output always increases", "extra input eventually yields smaller output increases", "cost is zero", "demand increases"], correct: 1 },
+      { q: "Inelastic demand means", opts: ["large response to price change", "small response to price change", "no supply", "perfect competition"], correct: 1 },
+      { q: "Normal good demand", opts: ["falls when income rises", "rises when income rises", "never changes", "fixed"], correct: 1 },
+      { q: "Inferior goods demand", opts: ["increases when income increases", "decreases when income increases", "constant", "no price"], correct: 1 },
+      { q: "Substitute goods are", opts: ["used together", "replacing each other", "free goods", "government goods"], correct: 1 },
+      { q: "Complementary goods are", opts: ["used together", "replacing each other", "unrelated", "illegal goods"], correct: 0 },
+      { q: "A decrease in supply shifts curve", opts: ["right", "left", "upward", "no change"], correct: 1 },
+      { q: "Real GDP is", opts: ["GDP at current prices", "GDP adjusted for inflation", "tax income", "exports only"], correct: 1 },
+      { q: "Money supply controlled by", opts: ["firms", "central bank", "consumers", "foreign banks"], correct: 1 },
+      { q: "Balance of payments records", opts: ["only exports", "all international transactions", "only imports", "only taxes"], correct: 1 },
+      { q: "Human capital refers to", opts: ["machines", "skills and knowledge", "natural resources", "money supply"], correct: 1 },
+      { q: "Physical capital includes", opts: ["education level", "tools and machinery", "labour skills", "government policies"], correct: 1 },
+      { q: "Entrepreneurship involves", opts: ["risk-taking in business", "saving money", "labour work", "government control"], correct: 0 },
+      { q: "Trade deficit means", opts: ["exports > imports", "imports > exports", "no trade", "taxes zero"], correct: 1 },
+      { q: "Tariff is a", opts: ["tax on imports", "subsidy on exports", "price control", "income tax"], correct: 0 },
+      { q: "Cost-push inflation occurs when", opts: ["production costs rise", "demand falls", "exports increase", "tax decreases"], correct: 0 },
+      { q: "Economic efficiency means", opts: ["wasting resources", "maximizing output from resources", "reducing production", "increasing unemployment"], correct: 1 },
+      { q: "Basic economic agents", opts: ["firms only", "households, firms, government", "banks only", "foreigners only"], correct: 1 },
+      { q: "Households mainly", opts: ["produce goods", "consume goods", "set taxes", "control inflation"], correct: 1 },
+      { q: "Firms mainly", opts: ["consume goods", "produce goods and services", "control government", "print money"], correct: 1 }
+    ];
+    
+    // Transform rawBank to use 'question', 'options', 'correct' keys
+    let coreQuestions = rawBank.map(item => ({
+      question: item.q,
+      options: item.opts,
+      correct: item.correct
+    }));
+    
+    // Expand to exactly 160 questions (some repetition with slight variation, but all valid)
+    let questions = [...coreQuestions];
+    const targetCount = 160;
+    if (questions.length < targetCount) {
+      let extraNeeded = targetCount - questions.length;
+      for (let i = 0; i < extraNeeded; i++) {
+        // cycle through core but add a small suffix to avoid confusion (optional)
+        let src = coreQuestions[i % coreQuestions.length];
+        questions.push({
+          question: src.question + (i % 3 === 0 ? " (review)" : ""),
+          options: [...src.options],
+          correct: src.correct
+        });
+      }
+    }
+    if (questions.length > targetCount) questions = questions.slice(0, targetCount);
+    
+    // ----- state: once answered, it stays answered (no reset per question) -----
+    let currentSlide = 0;
+    let userSelections = new Array(questions.length).fill(null);   // selected option index
+    let answeredStatus = new Array(questions.length).fill(false);  // locked after answer
+    
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    
+    function computeScore() {
+      let correct = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answeredStatus[i] && userSelections[i] === questions[i].correct) correct++;
+      }
+      return correct;
+    }
+    
+    function updateScoreUI() {
+      scoreDisplay.textContent = `${computeScore()}/${questions.length}`;
+    }
+    
+    function renderCurrentSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+      questionEl.textContent = q.question;
+      const isAnswered = answeredStatus[currentSlide];
+      const selectedIdx = userSelections[currentSlide];
+      const correctIdx = q.correct;
+      
+      let btnsHtml = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (isAnswered) {
+          if (idx === correctIdx) btnClass += ' correct-highlight';
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) btnClass += ' wrong-highlight';
+        }
+        const disabledAttr = isAnswered ? 'disabled' : '';
+        btnsHtml += `<button class="${btnClass}" data-opt-index="${idx}" ${disabledAttr}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = btnsHtml;
+      
+      if (isAnswered && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) {
+          feedbackTextEl.innerHTML = `<span class="green-feedback">✔️ Correct! Great job.</span>`;
+        } else {
+          const correctAnsText = q.options[correctIdx];
+          feedbackTextEl.innerHTML = `<span class="red-feedback">❌ Incorrect. Correct answer: </span><span class="green-feedback">“${correctAnsText}”</span>`;
+        }
+      } else {
+        feedbackTextEl.innerHTML = `✨ Select an answer — it will be saved permanently. You can move forward anytime.`;
+      }
+      
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+    
+    function onAnswerSelected(e) {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      if (answeredStatus[currentSlide]) return; // already answered, cannot change (no reset per question)
+      const idx = parseInt(btn.dataset.optIndex, 10);
+      answeredStatus[currentSlide] = true;
+      userSelections[currentSlide] = idx;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    function goPrev() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        renderCurrentSlide();
+      }
+    }
+    
+    function goNext() {
+      if (currentSlide < questions.length - 1) {
+        currentSlide++;
+        renderCurrentSlide();
+      }
+    }
+    
+    function fullReset() {
+      userSelections = new Array(questions.length).fill(null);
+      answeredStatus = new Array(questions.length).fill(false);
+      currentSlide = 0;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    optionsContainer.addEventListener('click', onAnswerSelected);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    resetBtn.addEventListener('click', fullReset);
+    
+    // initial render
+    if (questions.length) {
+      renderCurrentSlide();
+      updateScoreUI();
+    } else {
+      questionEl.textContent = "❗ No questions available";
+    }
+  })();
+</script>
+</body>
+</html>
