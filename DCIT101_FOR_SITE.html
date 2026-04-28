@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>ECONS 101 PASCO • Progressive Quiz</title>
+  <style>
+    
+  * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #e4f0fd;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .quiz-container {
+    max-width: 950px;
+    width: 100%;
+    background: rgba(235, 247, 255, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 2.5rem;
+    box-shadow: 0 20px 35px rgba(100, 150, 200, 0.2), 0 8px 20px rgba(70, 120, 180, 0.15);
+    padding: 1.8rem 1.5rem 2rem;
+    border: 1px solid #c6e0ff;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px dashed #b8d6ff;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(130deg, #2c6288, #498a8d);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge {
+    background: #d4e9ff;
+    border-radius: 60px;
+    padding: 0.4rem 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2f5575;
+    border: 1px solid #9fc9ff;
+    box-shadow: inset 0 1px 4px #f0faff, 0 3px 0 #9cb9d9;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge span {
+    background: #bed9ff;
+    padding: 0.2rem 0.9rem;
+    border-radius: 40px;
+    color: #1a3e5c;
+    font-size: 1.4rem;
+    line-height: 1;
+    border: 1px solid #8ab9f0;
+  }
+
+  .slide-area {
+    background: #f1faff;
+    border-radius: 2rem;
+    padding: 1.8rem 1.5rem 1.5rem;
+    margin: 1.2rem 0 1rem;
+    border: 1px solid #c5ddff;
+    box-shadow: inset 0 4px 8px #e4f2ff, 0 6px 0 #b0cbea;
+  }
+
+  .slide-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1a4463;
+    text-shadow: 0 1px 2px #e4f0ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .option-btn {
+    background: #e6f2ff;
+    border: 2px solid #b6d5ff;
+    border-radius: 50px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-align: left;
+    color: #1b3a54;
+    cursor: pointer;
+    transition: 0.12s linear;
+    box-shadow: 0 5px 0 #9cb9dc, 0 3px 10px rgba(120, 160, 210, 0.3);
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: #d5e9ff;
+    border-color: #88b8f0;
+    transform: scale(1.01);
+  }
+
+  .option-btn.correct-highlight {
+    background: #c8f0c8;
+    border-color: #479c47;
+    color: #155f1b;
+    box-shadow: 0 0 10px #a0e0a0, 0 5px 0 #3a854a;
+  }
+
+  .option-btn.wrong-highlight {
+    background: #ffe0e0;
+    border-color: #ff9494;
+    color: #a13131;
+    box-shadow: 0 0 10px #ffb5b5, 0 5px 0 #c75c5c;
+  }
+
+  .option-btn:disabled {
+    opacity: 0.95;
+    cursor: default;
+    filter: saturate(0.7);
+    transform: none;
+  }
+
+  .feedback-line {
+    min-height: 3rem;
+    margin: 1.4rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding: 0.8rem 1.4rem;
+    border-radius: 50px;
+    background: #e1f0ff;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-left: 8px solid #9ac2f0;
+    color: #234d6b;
+  }
+
+  .green-feedback { color: #1b7a3b; font-weight: 600; }
+  .red-feedback { color: #bc2c2c; font-weight: 600; }
+
+  .nav-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+  }
+
+  button.nav-btn {
+    background: #cde3ff;
+    border: none;
+    border-radius: 3rem;
+    padding: 0.7rem 1.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f4a70;
+    border-bottom: 4px solid #7fa3c7;
+    letter-spacing: 0.02rem;
+    cursor: pointer;
+    transition: 0.1s ease;
+    box-shadow: 0 5px 10px rgba(90, 130, 180, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  button.nav-btn:hover:not(:disabled) {
+    background: #b9d7ff;
+    border-bottom-color: #6087b0;
+    transform: translateY(-2px);
+  }
+
+  button.nav-btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+    filter: grayscale(0.3);
+    border-bottom-color: #9bb2cc;
+    transform: none;
+  }
+
+  .slide-indicator {
+    font-size: 1.2rem;
+    background: #e2f0ff;
+    padding: 0.5rem 1.4rem;
+    border-radius: 60px;
+    color: #26557c;
+    border: 1px solid #9ec3ec;
+    font-weight: 600;
+  }
+
+  .reset-btn {
+    background: #c2dcff;
+    border-bottom-color: #6f94bc;
+    padding: 0.7rem 1.6rem;
+  }
+
+  .footer-credit {
+    text-align: center;
+    color: #6183a3;
+    margin-top: 1.8rem;
+    font-size: 0.9rem;
+    border-top: 1px dashed #b6d3f2;
+    padding-top: 0.8rem;
+  }
+
+  @media (max-width: 550px) {
+    h1 { font-size: 1.7rem; }
+    .score-badge { font-size: 1rem; padding: 0.3rem 1rem; }
+    .score-badge span { font-size: 1.2rem; padding: 0.1rem 0.7rem; }
+    .slide-title { font-size: 1.35rem; }
+    .option-btn { font-size: 1rem; padding: 0.7rem 1.2rem; }
+    .feedback-line { font-size: 1rem; padding: 0.6rem 1rem; }
+    button.nav-btn { font-size: 1rem; padding: 0.6rem 1.3rem; }
+    .slide-indicator { font-size: 1rem; padding: 0.4rem 1rem; }
+    .quiz-container { padding: 1.2rem 1rem 1.5rem; }
+  }
+
+  @media (max-width: 450px) {
+    .nav-controls { justify-content: center; }
+    .header-row { flex-direction: column; align-items: flex-start; }
+  }
+  </style>
+</head>
+<body>
+<div class="quiz-container">
+  <div class="header-row">
+    <h1>📈 DCIT101 Pasco LEC 1-3</h1>
+    <div class="score-badge">
+      🏆 SCORE <span id="scoreDisplay">0/160</span>
+    </div>
+  </div>
+
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading concepts...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💡</span> <span id="feedbackText">tap any answer → instant feedback & unlimited progress</span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 59</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ FULL RESET</button>
+  </div>
+  <div class="footer-credit">⚡ Developed with ❤️ by @Cimon - THE TECH GUY • select & move forward – no answer lock reset needed</div>
+</div>
+
+<script>
+  (function() {
+    // ---------- ECONS 101 DYNAMIC QUESTION BANK (original raw format: q, opts, correct) ----------
+    const rawBank = [
+    
+  { q: "Computer science is best described as the study of", opts: ["only computer hardware repair", "algorithmic processes and their theory, design, efficiency and application", "internet browsing only", "how to type faster on computers"], correct: 1 },
+
+  { q: "The smallest unit of data a computer can process is", opts: ["Byte", "Bit", "Word", "Nibble"], correct: 1 },
+
+  { q: "A byte is made up of", opts: ["4 bits", "8 bits", "16 bits", "2 bits"], correct: 1 },
+
+  { q: "A nibble is equal to", opts: ["8 bits", "2 bits", "4 bits", "16 bits"], correct: 2 },
+
+  { q: "The binary number system uses which digits?", opts: ["0 and 1", "1 and 2", "0 to 9", "0 to 7"], correct: 0 },
+
+  { q: "Computers use binary mainly because they recognize", opts: ["three states", "ten states", "two states: ON and OFF", "only decimal values"], correct: 2 },
+
+  { q: "Which number system has base 16?", opts: ["Binary", "Hexadecimal", "Decimal", "Octal"], correct: 1 },
+
+  { q: "The hexadecimal digit A represents decimal", opts: ["11", "9", "10", "8"], correct: 2 },
+
+  { q: "The decimal value of binary 1101 is", opts: ["14", "12", "13", "11"], correct: 2 },
+
+  { q: "The binary equivalent of decimal 13 is", opts: ["1110", "1001", "1101", "1011"], correct: 2 },
+
+  { q: "The decimal number system is also called", opts: ["Base 2", "Base 10", "Base 8", "Base 16"], correct: 1 },
+
+  { q: "Hexadecimal is preferred by humans because it", opts: ["uses only two digits", "stores more memory", "is easier to read than long binary strings", "is faster than decimal"], correct: 2 },
+
+  { q: "An unsigned integer can represent", opts: ["negative values only", "zero and positive values only", "fractions only", "letters only"], correct: 1 },
+
+  { q: "Fixed-point representation is mainly used for", opts: ["images", "integers", "video", "sound"], correct: 1 },
+
+  { q: "Floating-point representation is mainly used for", opts: ["real numbers with fractions", "letters only", "whole numbers only", "machine instructions"], correct: 0 },
+
+  { q: "Which of the following is NOT multimedia data?", opts: ["Audio", "Text", "Screwdriver", "Video"], correct: 2 },
+
+  { q: "ASCII stands for", opts: ["Advanced Storage Code for Internet Interface", "American Standard Code for Information Interchange", "Automatic Standard Computer Index", "Applied System for Character Input"], correct: 1 },
+
+  { q: "A computer is a device that", opts: ["accepts data, processes it and gives output", "only stores files", "only performs arithmetic", "only connects to networks"], correct: 0 },
+
+  { q: "An algorithm must always", opts: ["run forever", "be ambiguous", "terminate after solving the problem", "be written in C++"], correct: 2 },
+
+  { q: "A valid algorithm must be", opts: ["very expensive", "well-defined and executable", "written only in English", "long and complex"], correct: 1 },
+
+  { q: "Which is an example of a conditional operation?", opts: ["Repeat step 1 three times", "Turn on the VCR", "If batter is too dry add water", "Rinse hair"], correct: 2 },
+
+  { q: "The earliest calculating device is the", opts: ["ENIAC", "UNIVAC", "Abacus", "Mark I"], correct: 2 },
+
+  { q: "Napier’s Bones were mainly used for", opts: ["internet communication", "multiplication using addition", "video editing", "data storage"], correct: 1 },
+
+  { q: "Charles Babbage designed the", opts: ["Difference Engine and Analytical Engine", "Internet and WWW", "ENIAC and UNIVAC", "Pascaline and Abacus"], correct: 0 },
+
+  { q: "Ada Lovelace is known as", opts: ["the first programmer", "the first hacker", "the first database admin", "the first web designer"], correct: 0 },
+
+  { q: "Alan Turing is associated with", opts: ["the Turing Test", "the first browser", "the first smartphone", "the first printer"], correct: 0 },
+
+  { q: "ENIAC stands for", opts: ["Electronic Numerical Integrator and Computer", "Enhanced Numeric Internet Access Controller", "Electronic Network Application Computer", "External Numerical Integrated Computer"], correct: 0 },
+
+  { q: "Moore’s Law states that", opts: ["computer prices double yearly", "IC complexity doubles roughly every 18 months", "internet speed halves yearly", "memory disappears yearly"], correct: 1 },
+
+  { q: "The World Wide Web was developed by", opts: ["Bill Gates", "Steve Jobs", "Tim Berners-Lee", "Alan Turing"], correct: 2 },
+
+  { q: "Communication means", opts: ["buying a computer", "sharing information from one point to another", "repairing hardware", "creating a database"], correct: 1 },
+
+  { q: "Telecommunication means", opts: ["television repair", "telephone only", "communication at a distance", "computer repair"], correct: 2 },
+
+  { q: "Which is part of a telecommunication system?", opts: ["Compiler", "Transmitter", "Spreadsheet", "Algorithm"], correct: 1 },
+
+  { q: "Transmission media is", opts: ["the physical path for sending signals", "a type of software", "an operating system", "a printer device"], correct: 0 },
+
+  { q: "Guided media is also called", opts: ["bounded media", "wireless media", "cloud media", "open media"], correct: 0 },
+
+  { q: "Which is an example of guided media?", opts: ["Satellite", "Radio waves", "Twisted pair cable", "Microwave"], correct: 2 },
+
+  { q: "Which is an example of unguided media?", opts: ["Coaxial cable", "Fibre optic cable", "Twisted pair cable", "Radio waves"], correct: 3 },
+
+  { q: "UTP stands for", opts: ["Universal Twisted Pair", "Unshielded Twisted Pair", "Unified Transmission Port", "Uncoded Twisted Path"], correct: 1 },
+
+  { q: "STP differs from UTP because it", opts: ["has extra shielding", "uses no copper", "is wireless", "cannot carry voice"], correct: 0 },
+
+  { q: "Which guided medium has the highest bandwidth?", opts: ["Twisted pair", "Coaxial cable", "Telephone wire", "Fibre optic"], correct: 3 },
+
+  { q: "Fibre optic communication depends on", opts: ["Ohm’s law", "Total internal reflection", "Newton’s law", "Hooke’s law"], correct: 1 },
+
+  { q: "Single mode fibre is usually excited with", opts: ["Laser", "LED", "Speaker", "Battery"], correct: 0 },
+
+  { q: "Which topology uses a central hub?", opts: ["Mesh", "Bus", "Star", "Ring"], correct: 2 },
+
+  { q: "In full mesh topology", opts: ["all hosts connect to every other host", "there is only one cable", "only wireless is used", "there is one server only"], correct: 0 },
+
+  { q: "A computer network is", opts: ["a collection of connected computers and devices", "one computer with a printer", "only internet access", "a mobile phone"], correct: 0 },
+
+  { q: "Which device helps connect computers in a network?", opts: ["Keyboard", "Router", "Projector", "Scanner"], correct: 1 },
+
+  { q: "Which device forwards data packets between networks?", opts: ["Mouse", "Router", "Monitor", "Printer"], correct: 1 },
+
+  { q: "A switch is mainly used to", opts: ["connect devices within a network", "print documents", "store files", "charge devices"], correct: 0 },
+
+  { q: "Which topology has a single point of failure at the hub?", opts: ["Star topology", "Mesh topology", "Ring topology", "Bus topology"], correct: 0 },
+
+  { q: "Which guided medium is least affected by interference?", opts: ["Twisted pair", "Fibre optic", "UTP", "Telephone cable"], correct: 1 },
+
+  { q: "Coaxial cable contains", opts: ["only plastic", "copper conductor and braided mesh", "glass only", "air only"], correct: 1 },
+
+  { q: "Optical fibre transmits data using", opts: ["light pulses", "sound waves", "magnetic ink", "paper signals"], correct: 0 },
+
+  { q: "Wireless communication uses", opts: ["no physical cables", "only copper wires", "only fibre optics", "only punch cards"], correct: 0 },
+
+  { q: "One major advantage of wireless networks is", opts: ["easy installation", "slower speed", "limited bandwidth", "high interference"], correct: 0 },
+
+  { q: "One disadvantage of wireless networks is", opts: ["security risks", "easy movement", "flexibility", "wider reach"], correct: 0 },
+
+  { q: "Which of these is a wireless medium?", opts: ["Twisted pair", "Infrared waves", "Coaxial cable", "Fibre optic"], correct: 1 },
+
+  { q: "Which of these belongs to the electromagnetic spectrum?", opts: ["Microwaves", "Keyboard", "Printer", "Hard disk"], correct: 0 },
+
+  { q: "Network topology refers to", opts: ["the arrangement of connected devices", "the cost of internet", "computer speed", "screen resolution"], correct: 0 }
+
+  
+    ];
+    
+    // Transform rawBank to use 'question', 'options', 'correct' keys
+    let coreQuestions = rawBank.map(item => ({
+      question: item.q,
+      options: item.opts,
+      correct: item.correct
+    }));
+    
+    // Expand to exactly 160 questions (some repetition with slight variation, but all valid)
+    let questions = [...coreQuestions];
+    const targetCount = 160;
+    if (questions.length < targetCount) {
+      let extraNeeded = targetCount - questions.length;
+      for (let i = 0; i < extraNeeded; i++) {
+        // cycle through core but add a small suffix to avoid confusion (optional)
+        let src = coreQuestions[i % coreQuestions.length];
+        questions.push({
+          question: src.question + (i % 3 === 0 ? " (review)" : ""),
+          options: [...src.options],
+          correct: src.correct
+        });
+      }
+    }
+    if (questions.length > targetCount) questions = questions.slice(0, targetCount);
+    
+    // ----- state: once answered, it stays answered (no reset per question) -----
+    let currentSlide = 0;
+    let userSelections = new Array(questions.length).fill(null);   // selected option index
+    let answeredStatus = new Array(questions.length).fill(false);  // locked after answer
+    
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    
+    function computeScore() {
+      let correct = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answeredStatus[i] && userSelections[i] === questions[i].correct) correct++;
+      }
+      return correct;
+    }
+    
+    function updateScoreUI() {
+      scoreDisplay.textContent = `${computeScore()}/${questions.length}`;
+    }
+    
+    function renderCurrentSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+      questionEl.textContent = q.question;
+      const isAnswered = answeredStatus[currentSlide];
+      const selectedIdx = userSelections[currentSlide];
+      const correctIdx = q.correct;
+      
+      let btnsHtml = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (isAnswered) {
+          if (idx === correctIdx) btnClass += ' correct-highlight';
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) btnClass += ' wrong-highlight';
+        }
+        const disabledAttr = isAnswered ? 'disabled' : '';
+        btnsHtml += `<button class="${btnClass}" data-opt-index="${idx}" ${disabledAttr}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = btnsHtml;
+      
+      if (isAnswered && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) {
+          feedbackTextEl.innerHTML = `<span class="green-feedback">✔️ Correct! Great job.</span>`;
+        } else {
+          const correctAnsText = q.options[correctIdx];
+          feedbackTextEl.innerHTML = `<span class="red-feedback">❌ Incorrect. Correct answer: </span><span class="green-feedback">“${correctAnsText}”</span>`;
+        }
+      } else {
+        feedbackTextEl.innerHTML = `✨ Select an answer — it will be saved permanently. You can move forward anytime.`;
+      }
+      
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+    
+    function onAnswerSelected(e) {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      if (answeredStatus[currentSlide]) return; // already answered, cannot change (no reset per question)
+      const idx = parseInt(btn.dataset.optIndex, 10);
+      answeredStatus[currentSlide] = true;
+      userSelections[currentSlide] = idx;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    function goPrev() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        renderCurrentSlide();
+      }
+    }
+    
+    function goNext() {
+      if (currentSlide < questions.length - 1) {
+        currentSlide++;
+        renderCurrentSlide();
+      }
+    }
+    
+    function fullReset() {
+      userSelections = new Array(questions.length).fill(null);
+      answeredStatus = new Array(questions.length).fill(false);
+      currentSlide = 0;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    optionsContainer.addEventListener('click', onAnswerSelected);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    resetBtn.addEventListener('click', fullReset);
+    
+    // initial render
+    if (questions.length) {
+      renderCurrentSlide();
+      updateScoreUI();
+    } else {
+      questionEl.textContent = "❗ No questions available";
+    }
+  })();
+</script>
+</body>
+</html>
