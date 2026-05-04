@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>UGRC150 LEC 6-10</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    /* ========== LIGHT THEME (Study Vault colors) ========== */
+    :root,
+    [data-theme="light"] {
+      --bg-body: #f4f7fc;
+      --bg-surface: #ffffff;
+      --card-bg: #ffffff;
+      --text-primary: #0a1e2f;
+      --text-secondary: #2c3e50;
+      --text-muted: #5a6e7c;
+      --border-light: #dee4ec;
+      --accent: #2c7da0;
+      --accent-hover: #1f5e7e;
+      --accent-soft: #eaf4f8;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      --footer-bg: #eef2f6;
+      --tag-bg: #e3f0f5;
+      --card-hover-border: #9ac0d0;
+      --quiz-option-bg: #ffffff;
+      --quiz-option-hover: #eaf4f8;
+      --correct-green: #2c7a4a;
+      --wrong-red: #b13e3e;
+      --feedback-bg: #eef4fa;
+    }
+
+    /* ========== DARK THEME (Study Vault colors) ========== */
+    [data-theme="dark"] {
+      --bg-body: #0a121c;
+      --bg-surface: #15232e;
+      --card-bg: #1b2c3a;
+      --text-primary: #edf2f7;
+      --text-secondary: #cbd9e6;
+      --text-muted: #95adc7;
+      --border-light: #2a3f4e;
+      --accent: #5faff0;
+      --accent-hover: #7bc2ff;
+      --accent-soft: #1e3a47;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      --footer-bg: #0c1722;
+      --tag-bg: #1f3e4c;
+      --card-hover-border: #3c7b9b;
+      --quiz-option-bg: #1b2c3a;
+      --quiz-option-hover: #2a3f50;
+      --correct-green: #62b87a;
+      --wrong-red: #e08585;
+      --feedback-bg: #1a2c3a;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .quiz-container {
+      max-width: 950px;
+      width: 100%;
+      background: var(--bg-surface);
+      border-radius: 2rem;
+      box-shadow: var(--shadow-md);
+      padding: 1.8rem 1.8rem 2rem;
+      border: 1px solid var(--border-light);
+      transition: all 0.2s;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed var(--border-light);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #7ba9cf);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .score-badge {
+      background: var(--accent-soft);
+      border-radius: 60px;
+      padding: 0.4rem 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .score-badge span {
+      background: var(--tag-bg);
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      color: var(--accent);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .theme-toggle-quiz {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .theme-toggle-quiz:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .slide-area {
+      background: var(--card-bg);
+      border-radius: 1.8rem;
+      padding: 1.6rem 1.6rem 1.4rem;
+      margin: 1.2rem 0 1rem;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .slide-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .option-btn {
+      background: var(--quiz-option-bg);
+      border: 2px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.85rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: 0.12s linear;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      font-family: inherit;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--quiz-option-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .option-btn.correct-highlight {
+      background: var(--correct-green);
+      border-color: var(--correct-green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(44, 122, 74, 0.2);
+    }
+
+    .option-btn.wrong-highlight {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+      box-shadow: 0 4px 12px rgba(177, 62, 62, 0.2);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.9;
+      cursor: default;
+      transform: none;
+    }
+
+    .feedback-line {
+      min-height: 3.5rem;
+      margin: 1.3rem 0 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.8rem 1.4rem;
+      border-radius: 60px;
+      background: var(--feedback-bg);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      border-left: 6px solid var(--accent);
+      color: var(--text-secondary);
+    }
+
+    .green-feedback { color: var(--correct-green); font-weight: 600; }
+    .red-feedback { color: var(--wrong-red); font-weight: 600; }
+
+    .nav-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      margin-top: 1.8rem;
+    }
+
+    button.nav-btn {
+      background: var(--accent-soft);
+      border: 1px solid var(--border-light);
+      border-radius: 3rem;
+      padding: 0.65rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      transition: 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+    }
+
+    button.nav-btn:hover:not(:disabled) {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    button.nav-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+      background: var(--accent-soft);
+      color: var(--text-muted);
+    }
+
+    .slide-indicator {
+      font-size: 1rem;
+      background: var(--tag-bg);
+      padding: 0.5rem 1.3rem;
+      border-radius: 60px;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      font-weight: 600;
+    }
+
+    .reset-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+    }
+    .reset-btn:hover:not(:disabled) {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+    }
+
+    .footer-credit {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 1.8rem;
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+    }
+
+    @media (max-width: 550px) {
+      body { padding: 1rem; }
+      .quiz-container { padding: 1.2rem 1rem; }
+      h1 { font-size: 1.6rem; }
+      .score-badge { font-size: 0.9rem; padding: 0.3rem 0.9rem; }
+      .slide-title { font-size: 1.3rem; }
+      .option-btn { font-size: 0.9rem; padding: 0.7rem 1.2rem; }
+      .feedback-line { font-size: 0.9rem; padding: 0.6rem 1rem; }
+      button.nav-btn { font-size: 0.85rem; padding: 0.5rem 1.2rem; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+<div class="quiz-container">
+  <div class="header-row">
+    <h1>📈UGRC LEC 6-10 EXAMINABLE</h1>
+    <div style="display: flex; gap: 0.7rem; align-items: center;">
+      <div class="score-badge">🏆 SCORE <span id="scoreDisplay">0/160</span></div>
+      <button class="theme-toggle-quiz" id="quizThemeToggle" aria-label="Switch theme">🌓 <span id="quizThemeText">Dark Mode</span></button>
+    </div>
+  </div>
+
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading concepts...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💡</span> <span id="feedbackText">tap any answer → instant feedback & unlimited progress</span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 160</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ FULL RESET</button>
+  </div>
+  <div class="footer-credit">⚡ Study Vault Edition • Theme-adaptive quiz — developed with ❤️ by Cimon</div>
+</div>
+
+<script>
+  (function() {
+    // ========== THEME SYSTEM (identical to Study Vault) ==========
+    const rootElement = document.body;
+    const themeToggleBtn = document.getElementById('quizThemeToggle');
+    function setTheme(theme) {
+      rootElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pqh_theme', theme);
+      if (themeToggleBtn) {
+        const newIcon = theme === 'light' ? '🌙' : '☀️';
+        const newText = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+        themeToggleBtn.innerHTML = `${newIcon} <span id="quizThemeText">${newText}</span>`;
+      }
+    }
+    const savedTheme = localStorage.getItem('pqh_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+    
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const current = rootElement.getAttribute('data-theme');
+        setTheme(current === 'light' ? 'dark' : 'light');
+      });
+    }
+
+    // ---------- UGRC QUESTION BANK (from original, expanded to 160) ----------
+    const rawBank = [
+             
+
+        { q: "A student argues: 'Everyone in Ghana is free, so women should stop complaining about lack of freedom.' What is the main flaw in this reasoning?", 
+        opts: ["It uses emotional appeal", "It commits equivocation by shifting meaning of 'freedom'", "It lacks evidence completely", "It is a factual statement"], 
+        correct: 1 },
+
+        { q: "Why is the statement 'It will rain tomorrow or it will not rain tomorrow' considered weak in reasoning?", 
+        opts: ["It is false", "It provides no useful information or prediction", "It is emotional", "It is a command"], 
+        correct: 1 },
+
+        { q: "A person says: 'She left last, therefore she stole the laptop.' What explains the error?", 
+        opts: ["It assumes causation without evidence", "It is a valid argument", "It is a definition", "It is a narrative"], 
+        correct: 0 },
+
+        { q: "Which explanation best describes an argument in critical thinking?", 
+        opts: ["Shouting to win a debate", "Expressing strong feelings", "Giving reasons to support a claim", "Narrating events"], 
+        correct: 2 },
+
+        { q: "A passage that lists steps to bake a cake is best classified as", 
+        opts: ["argument", "instruction", "narration", "rhetorical polemic"], 
+        correct: 1 },
+
+        { q: "A story describing events in sequence is classified as", 
+        opts: ["instruction", "argument", "narration", "definition"], 
+        correct: 2 },
+
+        { q: "Why are interrogative sentences not truth bearers?", 
+        opts: ["They are always false", "They express emotions", "They do not assert anything that can be true or false", "They are commands"], 
+        correct: 2 },
+
+        { q: "A student says: 'Close the door!' This is best explained as", 
+        opts: ["declarative", "interrogative", "imperative because it requests action", "definition"], 
+        correct: 2 },
+
+        { q: "Which explanation best distinguishes a statement from a sentence?", 
+        opts: ["All sentences are statements", "Statements can be true or false while some sentences cannot", "Statements are always questions", "Sentences have no meaning"], 
+        correct: 1 },
+
+        { q: "A student defines 'efficiency as being efficient'. What is wrong?", 
+        opts: ["It is too broad", "It is circular", "It is too narrow", "It is emotional"], 
+        correct: 1 },
+
+        { q: "Why is the definition 'A bird is an animal that flies' flawed?", 
+        opts: ["It is circular", "It is vague", "It is too narrow because not all birds fly", "It is emotional"], 
+        correct: 2 },
+
+        { q: "Why is 'A chair is something you sit on' considered broad?", 
+        opts: ["It excludes chairs", "It includes things like beds", "It is circular", "It is false"], 
+        correct: 1 },
+
+        { q: "Which explanation best defines connotation?", 
+        opts: ["Examples of a word", "Literal dictionary meaning", "Meaning or sense of a word", "Opposite meaning"], 
+        correct: 2 },
+
+        { q: "Which explanation best defines denotation?", 
+        opts: ["Meaning of word", "Examples or instances the word refers to", "Opposite meaning", "Emotion of word"], 
+        correct: 1 },
+
+        { q: "If a word has multiple meanings and is used ambiguously, what fallacy occurs?", 
+        opts: ["generalization", "equivocation", "analogy", "emotion"], 
+        correct: 1 },
+
+        { q: "Why are open-textured terms difficult to define?", 
+        opts: ["They have no meaning", "They have only one meaning", "They have multiple contestable meanings", "They are false"], 
+        correct: 2 },
+
+        { q: "Which explanation best describes a well-defined concept?", 
+        opts: ["It is vague", "Its meaning is clear and not contestable", "It has many meanings", "It is emotional"], 
+        correct: 1 },
+
+        { q: "A politician says: 'You should vote for me because I care.' What is the weakness?", 
+        opts: ["Strong evidence", "No supporting reasons given", "It is a definition", "It is narrative"], 
+        correct: 1 },
+
+        { q: "Why is rhetorical polemic different from argument?", 
+        opts: ["It provides evidence", "It focuses on emotion rather than logical support", "It gives instructions", "It defines terms"], 
+        correct: 1 },
+
+        { q: "Which explanation best describes premises in an argument?", 
+        opts: ["Final conclusion", "Reasons supporting a claim", "Questions", "Definitions"], 
+        correct: 1 },
+
+        { q: "Which explanation best describes a conclusion?", 
+        opts: ["Supporting reason", "Main claim derived from premises", "Question", "Emotion"], 
+        correct: 1 },
+
+        { q: "The use of 'therefore' usually indicates", 
+        opts: ["premise", "example", "conclusion", "definition"], 
+        correct: 2 },
+
+        { q: "The use of 'since' usually indicates", 
+        opts: ["conclusion", "premise", "emotion", "command"], 
+        correct: 1 },
+
+        { q: "A student says: 'He is a good leader because he is a leader.' Why is this flawed?", 
+        opts: ["Too broad", "Circular reasoning", "Too narrow", "Emotional"], 
+        correct: 1 },
+
+        { q: "Which explanation best describes value judgment?", 
+        opts: ["Objective fact", "Subjective evaluation or opinion", "Definition", "Command"], 
+        correct: 1 },
+
+        { q: "Which explanation best distinguishes factual statement?", 
+        opts: ["Depends on opinion", "Based on observation", "Emotion", "Command"], 
+        correct: 1 },
+
+        { q: "Why can a factual statement still be false?", 
+        opts: ["It is emotional", "It depends on opinion", "Its truth depends on reality, not belief", "It is a command"], 
+        correct: 2 },
+
+        { q: "A metaphor like 'He is a lion' is best explained as", 
+        opts: ["factual", "definition", "value judgment", "instruction"], 
+        correct: 2 },
+
+        { q: "Which explanation best describes instruction discourse?", 
+        opts: ["Sequence of events", "Steps to achieve an outcome", "Emotional speech", "Argument"], 
+        correct: 1 },
+
+        { q: "Why is narration different from argument?", 
+        opts: ["It gives reasons", "It reports events without proving a claim", "It defines terms", "It commands"], 
+        correct: 1 },
+
+        { q: "A passage full of emotional persuasion is best classified as", 
+        opts: ["argument", "instruction", "rhetorical polemic", "definition"], 
+        correct: 2 },
+
+        { q: "Which explanation best describes critical thinking?", 
+        opts: ["Accepting all ideas", "Careful evaluation of claims using reasons", "Emotional thinking", "Guessing"], 
+        correct: 1 },
+
+        { q: "Why is critical thinking said to be topic-neutral?", 
+        opts: ["It applies only to science", "It applies across all disciplines", "It applies only to logic", "It applies only to math"], 
+        correct: 1 },
+
+        { q: "Which explanation best describes a good critical thinker?", 
+        opts: ["Follows crowd", "Accepts everything", "Evaluates evidence before believing", "Ignores reasoning"], 
+        correct: 2 },
+
+        { q: "Why is 'Wow! That is amazing!' not a statement?", 
+        opts: ["It is false", "It lacks truth value", "It is too long", "It is logical"], 
+        correct: 1 },
+
+        { q: "Which explanation best describes sentence fragment?", 
+        opts: ["Complete thought", "Incomplete expression", "Definition", "Argument"], 
+        correct: 1 },
+
+        { q: "Why do imperatives lack truth value?", 
+        opts: ["They are false", "They are commands not claims", "They are emotional", "They are definitions"], 
+        correct: 1 },
+
+        { q: "A speaker uses the word 'free' differently in one argument. What is happening?", 
+        opts: ["definition", "equivocation", "instruction", "narration"], 
+        correct: 1 },
+
+        { q: "Which explanation best describes flawed definition being vague?", 
+        opts: ["Too specific", "Not clear enough to determine meaning", "Circular", "Too narrow"], 
+        correct: 1 },
+
+        { q: "Which explanation best describes narrow definition?", 
+        opts: ["Includes too much", "Excludes valid cases", "Repeats itself", "Emotional"], 
+        correct: 1 },
+
+
+
+       ];
+    
+    let coreQuestions = rawBank.map(item => ({ question: item.q, options: [...item.opts], correct: item.correct }));
+    let questions = [...coreQuestions];
+    const targetCount = 160;
+    if (questions.length < targetCount) {
+      let extraNeeded = targetCount - questions.length;
+      for (let i = 0; i < extraNeeded; i++) {
+        let src = coreQuestions[i % coreQuestions.length];
+        questions.push({
+          question: src.question + (i % 3 === 0 ? " (review)" : ""),
+          options: [...src.options],
+          correct: src.correct
+        });
+      }
+    }
+    if (questions.length > targetCount) questions = questions.slice(0, targetCount);
+    
+    // Randomize options order for each question (consistent behaviour with Study Vault)
+    for (let q of questions) {
+      const optsWithFlag = q.options.map((txt, idx) => ({ text: txt, isCorrect: idx === q.correct }));
+      for (let i = optsWithFlag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optsWithFlag[i], optsWithFlag[j]] = [optsWithFlag[j], optsWithFlag[i]];
+      }
+      const newOpts = optsWithFlag.map(item => item.text);
+      const newCorrect = optsWithFlag.findIndex(item => item.isCorrect);
+      q.options = newOpts;
+      q.correct = newCorrect;
+    }
+    
+    let currentSlide = 0;
+    let userSelections = new Array(questions.length).fill(null);
+    let answeredStatus = new Array(questions.length).fill(false);
+    
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    
+    function computeScore() {
+      let correct = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answeredStatus[i] && userSelections[i] === questions[i].correct) correct++;
+      }
+      return correct;
+    }
+    function updateScoreUI() { scoreDisplay.textContent = `${computeScore()}/${questions.length}`; }
+    
+    function renderCurrentSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+      questionEl.textContent = q.question;
+      const isAnswered = answeredStatus[currentSlide];
+      const selectedIdx = userSelections[currentSlide];
+      const correctIdx = q.correct;
+      
+      let btnsHtml = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (isAnswered) {
+          if (idx === correctIdx) btnClass += ' correct-highlight';
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) btnClass += ' wrong-highlight';
+        }
+        btnsHtml += `<button class="${btnClass}" data-opt-index="${idx}" ${isAnswered ? 'disabled' : ''}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = btnsHtml;
+      
+      if (isAnswered && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) feedbackTextEl.innerHTML = `<span class="green-feedback">✔️ Correct! Great job.</span>`;
+        else feedbackTextEl.innerHTML = `<span class="red-feedback">❌ Incorrect. Correct answer: </span><span class="green-feedback">“${q.options[correctIdx]}”</span>`;
+      } else {
+        feedbackTextEl.innerHTML = `✨ Select an answer — it will be saved permanently. You can move forward anytime.`;
+      }
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+    
+    function onAnswerSelected(e) {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      if (answeredStatus[currentSlide]) return;
+      const idx = parseInt(btn.dataset.optIndex, 10);
+      answeredStatus[currentSlide] = true;
+      userSelections[currentSlide] = idx;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    function goPrev() { if (currentSlide > 0) { currentSlide--; renderCurrentSlide(); } }
+    function goNext() { if (currentSlide < questions.length - 1) { currentSlide++; renderCurrentSlide(); } }
+    function fullReset() {
+      userSelections = new Array(questions.length).fill(null);
+      answeredStatus = new Array(questions.length).fill(false);
+      currentSlide = 0;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    optionsContainer.addEventListener('click', onAnswerSelected);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    resetBtn.addEventListener('click', fullReset);
+    if (questions.length) { renderCurrentSlide(); updateScoreUI(); }
+    else questionEl.textContent = "❗ No questions available";
+  })();
+</script>
+</body>
+</html>

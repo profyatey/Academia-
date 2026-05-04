@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>DCIT105 </title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    /* ========== LIGHT THEME (Study Vault colors) ========== */
+    :root,
+    [data-theme="light"] {
+      --bg-body: #f4f7fc;
+      --bg-surface: #ffffff;
+      --card-bg: #ffffff;
+      --text-primary: #0a1e2f;
+      --text-secondary: #2c3e50;
+      --text-muted: #5a6e7c;
+      --border-light: #dee4ec;
+      --accent: #2c7da0;
+      --accent-hover: #1f5e7e;
+      --accent-soft: #eaf4f8;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      --footer-bg: #eef2f6;
+      --tag-bg: #e3f0f5;
+      --card-hover-border: #9ac0d0;
+      --quiz-option-bg: #ffffff;
+      --quiz-option-hover: #eaf4f8;
+      --correct-green: #2c7a4a;
+      --wrong-red: #b13e3e;
+      --feedback-bg: #eef4fa;
+    }
+
+    /* ========== DARK THEME (Study Vault colors) ========== */
+    [data-theme="dark"] {
+      --bg-body: #0a121c;
+      --bg-surface: #15232e;
+      --card-bg: #1b2c3a;
+      --text-primary: #edf2f7;
+      --text-secondary: #cbd9e6;
+      --text-muted: #95adc7;
+      --border-light: #2a3f4e;
+      --accent: #5faff0;
+      --accent-hover: #7bc2ff;
+      --accent-soft: #1e3a47;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      --footer-bg: #0c1722;
+      --tag-bg: #1f3e4c;
+      --card-hover-border: #3c7b9b;
+      --quiz-option-bg: #1b2c3a;
+      --quiz-option-hover: #2a3f50;
+      --correct-green: #62b87a;
+      --wrong-red: #e08585;
+      --feedback-bg: #1a2c3a;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .quiz-container {
+      max-width: 950px;
+      width: 100%;
+      background: var(--bg-surface);
+      border-radius: 2rem;
+      box-shadow: var(--shadow-md);
+      padding: 1.8rem 1.8rem 2rem;
+      border: 1px solid var(--border-light);
+      transition: all 0.2s;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed var(--border-light);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #7ba9cf);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .score-badge {
+      background: var(--accent-soft);
+      border-radius: 60px;
+      padding: 0.4rem 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .score-badge span {
+      background: var(--tag-bg);
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      color: var(--accent);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .theme-toggle-quiz {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .theme-toggle-quiz:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .slide-area {
+      background: var(--card-bg);
+      border-radius: 1.8rem;
+      padding: 1.6rem 1.6rem 1.4rem;
+      margin: 1.2rem 0 1rem;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .slide-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .option-btn {
+      background: var(--quiz-option-bg);
+      border: 2px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.85rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: 0.12s linear;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      font-family: inherit;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--quiz-option-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .option-btn.correct-highlight {
+      background: var(--correct-green);
+      border-color: var(--correct-green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(44, 122, 74, 0.2);
+    }
+
+    .option-btn.wrong-highlight {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+      box-shadow: 0 4px 12px rgba(177, 62, 62, 0.2);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.9;
+      cursor: default;
+      transform: none;
+    }
+
+    .feedback-line {
+      min-height: 3.5rem;
+      margin: 1.3rem 0 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.8rem 1.4rem;
+      border-radius: 60px;
+      background: var(--feedback-bg);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      border-left: 6px solid var(--accent);
+      color: var(--text-secondary);
+    }
+
+    .green-feedback { color: var(--correct-green); font-weight: 600; }
+    .red-feedback { color: var(--wrong-red); font-weight: 600; }
+
+    .nav-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      margin-top: 1.8rem;
+    }
+
+    button.nav-btn {
+      background: var(--accent-soft);
+      border: 1px solid var(--border-light);
+      border-radius: 3rem;
+      padding: 0.65rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      transition: 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+    }
+
+    button.nav-btn:hover:not(:disabled) {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    button.nav-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+      background: var(--accent-soft);
+      color: var(--text-muted);
+    }
+
+    .slide-indicator {
+      font-size: 1rem;
+      background: var(--tag-bg);
+      padding: 0.5rem 1.3rem;
+      border-radius: 60px;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      font-weight: 600;
+    }
+
+    .reset-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+    }
+    .reset-btn:hover:not(:disabled) {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+    }
+
+    .footer-credit {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 1.8rem;
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+    }
+
+    @media (max-width: 550px) {
+      body { padding: 1rem; }
+      .quiz-container { padding: 1.2rem 1rem; }
+      h1 { font-size: 1.6rem; }
+      .score-badge { font-size: 0.9rem; padding: 0.3rem 0.9rem; }
+      .slide-title { font-size: 1.3rem; }
+      .option-btn { font-size: 0.9rem; padding: 0.7rem 1.2rem; }
+      .feedback-line { font-size: 0.9rem; padding: 0.6rem 1rem; }
+      button.nav-btn { font-size: 0.85rem; padding: 0.5rem 1.2rem; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+<div class="quiz-container">
+  <div class="header-row">
+    <h1>📈 DCIT105 LEC 1-4</h1>
+    <div style="display: flex; gap: 0.7rem; align-items: center;">
+      <div class="score-badge">🏆 SCORE <span id="scoreDisplay">0/160</span></div>
+      <button class="theme-toggle-quiz" id="quizThemeToggle" aria-label="Switch theme">🌓 <span id="quizThemeText">Dark Mode</span></button>
+    </div>
+  </div>
+
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading concepts...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💡</span> <span id="feedbackText">tap any answer → instant feedback & unlimited progress</span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 160</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ FULL RESET</button>
+  </div>
+  <div class="footer-credit">⚡ Study Vault Edition • Theme-adaptive quiz — developed with ❤️ by Cimon</div>
+</div>
+
+<script>
+  (function() {
+    // ========== THEME SYSTEM (identical to Study Vault) ==========
+    const rootElement = document.body;
+    const themeToggleBtn = document.getElementById('quizThemeToggle');
+    function setTheme(theme) {
+      rootElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pqh_theme', theme);
+      if (themeToggleBtn) {
+        const newIcon = theme === 'light' ? '🌙' : '☀️';
+        const newText = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+        themeToggleBtn.innerHTML = `${newIcon} <span id="quizThemeText">${newText}</span>`;
+      }
+    }
+    const savedTheme = localStorage.getItem('pqh_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+    
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const current = rootElement.getAttribute('data-theme');
+        setTheme(current === 'light' ? 'dark' : 'light');
+      });
+    }
+
+    // ---------- DCIT105 QUESTION BANK (from original, expanded to 160) ----------
+    const rawBank = [
+                    { q: "What is a number system?", opts: ["A way of storing data in memory", "A method of naming and representing numbers using symbols", "A hardware design for computers", "A type of programming language"], correct: 1 },
+            { q: "What does radix represent in a number system?", opts: ["The largest number in the system", "The number of digits or symbols used", "The position of digits", "The conversion method"], correct: 1 },
+            { q: "Why do computers use binary numbers?", opts: ["Because they are faster to write", "Because they only understand two states like high and low voltage", "Because binary numbers are shorter", "Because humans prefer them"], correct: 1 },
+            { q: "Which of the following best explains why decimal must be converted to binary in computing?", opts: ["Computers cannot store decimal numbers directly", "Binary is easier for humans", "Computers process data using two-state signals", "Decimal numbers are inaccurate"], correct: 2 },
+            { q: "Which number system uses digits 0–9?", opts: ["Binary", "Octal", "Decimal", "Hexadecimal"], correct: 2 },
+            { q: "Which system is used to represent data internally in computers?", opts: ["Decimal", "Binary", "Octal", "Hexadecimal"], correct: 1 },
+            { q: "What is the radix of the binary number system?", opts: ["2", "8", "10", "16"], correct: 0 },
+            { q: "Which statement explains hexadecimal usage?", opts: ["Used only in calculators", "Represents large numbers with fewer digits", "Used only for text", "Used only for logic"], correct: 1 },
+            { q: "Which application uses octal numbers?", opts: ["Web design colors", "UNIX file permissions", "Phone numbers", "Bank transactions"], correct: 1 },
+            { q: "Why are number systems important in computing?", opts: ["They reduce memory size", "They help understand data representation and processing", "They eliminate errors", "They replace programming languages"], correct: 1 },
+            { q: "A signal in computing refers to:", opts: ["A stored number", "An electrical representation of data", "A program instruction", "A memory unit"], correct: 1 },
+            { q: "What distinguishes analog signals from digital signals?", opts: ["Analog is discrete, digital is continuous", "Analog is continuous, digital is discrete", "Both are discrete", "Both are continuous"], correct: 1 },
+            { q: "Which example represents a digital signal?", opts: ["Temperature varying smoothly", "A sine wave", "Binary representation like 00001001", "Sound waves"], correct: 2 },
+            { q: "Which statement best explains analog signals?", opts: ["They use only two values", "They are continuous over a range", "They store only integers", "They are used only in computers"], correct: 1 },
+            { q: "What is Binary Coded Decimal (BCD) used for?", opts: ["Graphics rendering", "Encoding decimal numbers in binary form", "File permissions", "Networking protocols"], correct: 1 },
+            { q: "Which is NOT an application of number systems?", opts: ["Image processing", "Arithmetic computation", "Network communication", "Eliminating hardware"], correct: 3 },
+            { q: "Convert binary 1010 to decimal.", opts: ["8", "9", "10", "11"], correct: 2 },
+            { q: "What is the decimal value of binary 1001?", opts: ["7", "8", "9", "10"], correct: 2 },
+            { q: "Why are powers used in positional number systems?", opts: ["To reduce digits", "To assign weight to each position", "To simplify notation only", "To increase size"], correct: 1 },
+            { q: "Which is the least significant bit (LSB)?", opts: ["Leftmost bit", "Middle bit", "Rightmost bit", "Highest value bit"], correct: 2 },
+            { q: "What is 1’s complement of 1010?", opts: ["0101", "1011", "1001", "0110"], correct: 0 },
+            { q: "What is 2’s complement of 1010?", opts: ["0101", "0110", "1001", "1011"], correct: 1 },
+            { q: "Why is 2’s complement used?", opts: ["To store decimal numbers", "To represent negative numbers in binary", "To simplify multiplication", "To reduce memory"], correct: 1 },
+            { q: "What is 9’s complement of 2496?", opts: ["7503", "7504", "2496", "5000"], correct: 0 },
+            { q: "What is 10’s complement of 2496?", opts: ["7503", "7504", "7505", "2495"], correct: 1 },
+            { q: "Which complement is used in octal systems?", opts: ["2’s complement", "7’s and 8’s complement", "9’s complement", "16’s complement"], correct: 1 },
+            { q: "What is overflow in digital systems?", opts: ["When a number is too small", "When result exceeds storage capacity", "When input is invalid", "When bits are missing"], correct: 1 },
+            { q: "Why does overflow occur?", opts: ["Too many instructions", "Insufficient bits to represent result", "Incorrect algorithm", "Low memory speed"], correct: 1 },
+            { q: "Which situation indicates overflow?", opts: ["Correct sign output", "Unexpected sign change", "Small result", "Zero result"], correct: 1 },
+            { q: "What is the maximum value of an 8-bit number?", opts: ["127", "255", "256", "128"], correct: 1 },
+            { q: "What defines a proposition?", opts: ["A command statement", "A declarative sentence that is true or false", "A question", "A variable"], correct: 1 },
+            { q: "Which is a proposition?", opts: ["What time is it?", "x + y = z", "2 + 2 = 4", "Close the door"], correct: 2 },
+            { q: "Why is 'x + y = z' not a proposition?", opts: ["It is false", "It is too complex", "Truth depends on variables", "It is not mathematical"], correct: 2 },
+            { q: "What is negation?", opts: ["Combining statements", "Opposite truth value of a proposition", "Conditional logic", "A mathematical proof"], correct: 1 },
+            { q: "If p is TRUE, what is ¬p?", opts: ["TRUE", "FALSE", "Undefined", "Both"], correct: 1 },
+            { q: "What is conjunction?", opts: ["p OR q", "p AND q", "NOT p", "p implies q"], correct: 1 },
+            { q: "When is p ∧ q true?", opts: ["When both are true", "When one is true", "When both are false", "Always"], correct: 0 },
+            { q: "What is disjunction?", opts: ["AND operation", "NOT operation", "OR operation", "XOR operation"], correct: 2 },
+            { q: "When is p ∨ q false?", opts: ["When both are true", "When one is true", "When both are false", "Always"], correct: 2 },
+            { q: "What is exclusive OR?", opts: ["Both true", "One true only", "Always false", "Always true"], correct: 1 },
+            { q: "What is implication p → q?", opts: ["p and q", "p or q", "If p then q", "Not p"], correct: 2 },
+            { q: "When is implication false?", opts: ["p true, q false", "p false, q true", "Both true", "Both false"], correct: 0 },
+            { q: "What is a compound proposition?", opts: ["Single variable", "Combination of propositions", "Numeric expression", "Equation"], correct: 1 },
+            { q: "Which operator represents AND?", opts: ["∨", "¬", "∧", "→"], correct: 2 },
+            { q: "Which operator represents OR?", opts: ["∧", "∨", "¬", "→"], correct: 1 },
+            { q: "What is propositional logic used for?", opts: ["Hardware design", "Validating arguments", "Data storage", "Networking"], correct: 1 },
+            { q: "Which is NOT a logical operator?", opts: ["Negation", "Addition", "Conjunction", "Disjunction"], correct: 1 },
+            { q: "What is predicate logic?", opts: ["Extension of propositional logic", "Arithmetic logic", "Binary system", "Programming language"], correct: 0 },
+            { q: "Why is predicate logic needed?", opts: ["To simplify numbers", "To express statements involving variables", "To reduce memory", "To convert binary"], correct: 1 },
+            { q: "What is a predicate?", opts: ["A constant value", "Statement about a variable", "A number system", "A logic gate"], correct: 1 },
+            { q: "What happens when a value is assigned to a predicate?", opts: ["It becomes false", "It becomes a proposition", "It disappears", "It becomes undefined"], correct: 1 },
+            { q: "What is a domain?", opts: ["Set of possible values", "Single variable", "A function", "A number system"], correct: 0 },
+            { q: "What does ∀ represent?", opts: ["Exists", "For all", "Not", "And"], correct: 1 },
+            { q: "What does ∃ represent?", opts: ["For all", "Exists", "Not", "Or"], correct: 1 },
+            { q: "Which statement explains universal quantification?", opts: ["True for some values", "True for all values", "False always", "Undefined"], correct: 1 },
+            { q: "Which statement explains existential quantification?", opts: ["True for all", "True for at least one", "False always", "Always true"], correct: 1 },
+            { q: "What is a precondition?", opts: ["Output condition", "Initial condition before execution", "Final state", "Error state"], correct: 1 },
+            { q: "What is a postcondition?", opts: ["Initial condition", "Final outcome after execution", "Input value", "Variable type"], correct: 1 },
+            { q: "Why are predicates used in programs?", opts: ["To store values", "To make decisions based on conditions", "To display output", "To convert numbers"], correct: 1 },
+            { q: "Which best describes logical equivalence?", opts: ["Different truth values", "Same truth values in all cases", "Always false", "Always true"], correct: 1 },
+            { q: "Scenario: A system stores temperature continuously. Which signal type is used?", opts: ["Digital because discrete", "Analog because continuous", "Binary because two states", "Octal because grouped"], correct: 1 },
+            { q: "Scenario: A computer displays ON/OFF states. Which system is used?", opts: ["Decimal", "Binary", "Octal", "Hexadecimal"], correct: 1 },
+            { q: "Scenario: A programmer checks if x > 0 before execution. What is this?", opts: ["Postcondition", "Predicate", "Binary value", "Signal"], correct: 1 },
+            { q: "Scenario: A sum exceeds 8-bit storage. What occurs?", opts: ["Underflow", "Overflow", "Conversion error", "Logic error"], correct: 1 },
+            { q: "Why is hexadecimal preferred in computing?", opts: ["More digits", "Shorter representation of large values", "Simpler arithmetic", "Binary replacement"], correct: 1 },
+            { q: "How does binary simplify hardware design?", opts: ["Uses many states", "Uses two stable states", "Uses decimal values", "Uses analog waves"], correct: 1 },
+            { q: "What explains the need for complements?", opts: ["To simplify division", "To represent negative numbers", "To convert decimal", "To reduce digits"], correct: 1 },
+            { q: "Which is a logical trap?", opts: ["Assuming OR means exclusive always", "AND requires both true", "NOT reverses value", "Implication has conditions"], correct: 0 },
+            { q: "Which statement best explains implication truth?", opts: ["Always false when both false", "False only when premise true and conclusion false", "Always true", "False when both true"], correct: 1 },
+            { q: "What is the result of p ∨ q if p is true?", opts: ["Always false", "Always true regardless of q", "Depends on q", "Undefined"], correct: 1 },
+            { q: "What is the result of p ∧ q if p is false?", opts: ["True if q is true", "Always false", "Always true", "Depends"], correct: 1 },
+            { q: "Why is logic important in computer science?", opts: ["To design circuits and programs", "To reduce cost", "To eliminate memory", "To avoid binary"], correct: 0 },
+            { q: "What explains discrete output in digital systems?", opts: ["Continuous variation", "Step values", "Infinite range", "Analog behavior"], correct: 1 },
+            { q: "Which best describes inclusive OR?", opts: ["Only one true", "At least one true", "Both false", "Only both true"], correct: 1 },
+            { q: "Which best describes exclusive OR?", opts: ["Both true", "One true only", "At least one true", "Both false"], correct: 1 },
+            { q: "Which concept allows reasoning about groups of elements?", opts: ["Binary arithmetic", "Predicate logic", "Decimal system", "Signal processing"], correct: 1 }                  
+                ];
+    
+    let coreQuestions = rawBank.map(item => ({ question: item.q, options: [...item.opts], correct: item.correct }));
+    let questions = [...coreQuestions];
+    const targetCount = 160;
+    if (questions.length < targetCount) {
+      let extraNeeded = targetCount - questions.length;
+      for (let i = 0; i < extraNeeded; i++) {
+        let src = coreQuestions[i % coreQuestions.length];
+        questions.push({
+          question: src.question + (i % 3 === 0 ? " (review)" : ""),
+          options: [...src.options],
+          correct: src.correct
+        });
+      }
+    }
+    if (questions.length > targetCount) questions = questions.slice(0, targetCount);
+    
+    // Randomize options order for each question (consistent behaviour with Study Vault)
+    for (let q of questions) {
+      const optsWithFlag = q.options.map((txt, idx) => ({ text: txt, isCorrect: idx === q.correct }));
+      for (let i = optsWithFlag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optsWithFlag[i], optsWithFlag[j]] = [optsWithFlag[j], optsWithFlag[i]];
+      }
+      const newOpts = optsWithFlag.map(item => item.text);
+      const newCorrect = optsWithFlag.findIndex(item => item.isCorrect);
+      q.options = newOpts;
+      q.correct = newCorrect;
+    }
+    
+    let currentSlide = 0;
+    let userSelections = new Array(questions.length).fill(null);
+    let answeredStatus = new Array(questions.length).fill(false);
+    
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    
+    function computeScore() {
+      let correct = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answeredStatus[i] && userSelections[i] === questions[i].correct) correct++;
+      }
+      return correct;
+    }
+    function updateScoreUI() { scoreDisplay.textContent = `${computeScore()}/${questions.length}`; }
+    
+    function renderCurrentSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+      questionEl.textContent = q.question;
+      const isAnswered = answeredStatus[currentSlide];
+      const selectedIdx = userSelections[currentSlide];
+      const correctIdx = q.correct;
+      
+      let btnsHtml = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (isAnswered) {
+          if (idx === correctIdx) btnClass += ' correct-highlight';
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) btnClass += ' wrong-highlight';
+        }
+        btnsHtml += `<button class="${btnClass}" data-opt-index="${idx}" ${isAnswered ? 'disabled' : ''}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = btnsHtml;
+      
+      if (isAnswered && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) feedbackTextEl.innerHTML = `<span class="green-feedback">✔️ Correct! Great job.</span>`;
+        else feedbackTextEl.innerHTML = `<span class="red-feedback">❌ Incorrect. Correct answer: </span><span class="green-feedback">“${q.options[correctIdx]}”</span>`;
+      } else {
+        feedbackTextEl.innerHTML = `✨ Select an answer — it will be saved permanently. You can move forward anytime.`;
+      }
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+    
+    function onAnswerSelected(e) {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      if (answeredStatus[currentSlide]) return;
+      const idx = parseInt(btn.dataset.optIndex, 10);
+      answeredStatus[currentSlide] = true;
+      userSelections[currentSlide] = idx;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    function goPrev() { if (currentSlide > 0) { currentSlide--; renderCurrentSlide(); } }
+    function goNext() { if (currentSlide < questions.length - 1) { currentSlide++; renderCurrentSlide(); } }
+    function fullReset() {
+      userSelections = new Array(questions.length).fill(null);
+      answeredStatus = new Array(questions.length).fill(false);
+      currentSlide = 0;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    optionsContainer.addEventListener('click', onAnswerSelected);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    resetBtn.addEventListener('click', fullReset);
+    if (questions.length) { renderCurrentSlide(); updateScoreUI(); }
+    else questionEl.textContent = "❗ No questions available";
+  })();
+</script>
+</body>
+</html>

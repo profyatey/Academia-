@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>DCIT105 </title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    /* ========== LIGHT THEME (Study Vault colors) ========== */
+    :root,
+    [data-theme="light"] {
+      --bg-body: #f4f7fc;
+      --bg-surface: #ffffff;
+      --card-bg: #ffffff;
+      --text-primary: #0a1e2f;
+      --text-secondary: #2c3e50;
+      --text-muted: #5a6e7c;
+      --border-light: #dee4ec;
+      --accent: #2c7da0;
+      --accent-hover: #1f5e7e;
+      --accent-soft: #eaf4f8;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      --footer-bg: #eef2f6;
+      --tag-bg: #e3f0f5;
+      --card-hover-border: #9ac0d0;
+      --quiz-option-bg: #ffffff;
+      --quiz-option-hover: #eaf4f8;
+      --correct-green: #2c7a4a;
+      --wrong-red: #b13e3e;
+      --feedback-bg: #eef4fa;
+    }
+
+    /* ========== DARK THEME (Study Vault colors) ========== */
+    [data-theme="dark"] {
+      --bg-body: #0a121c;
+      --bg-surface: #15232e;
+      --card-bg: #1b2c3a;
+      --text-primary: #edf2f7;
+      --text-secondary: #cbd9e6;
+      --text-muted: #95adc7;
+      --border-light: #2a3f4e;
+      --accent: #5faff0;
+      --accent-hover: #7bc2ff;
+      --accent-soft: #1e3a47;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      --footer-bg: #0c1722;
+      --tag-bg: #1f3e4c;
+      --card-hover-border: #3c7b9b;
+      --quiz-option-bg: #1b2c3a;
+      --quiz-option-hover: #2a3f50;
+      --correct-green: #62b87a;
+      --wrong-red: #e08585;
+      --feedback-bg: #1a2c3a;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .quiz-container {
+      max-width: 950px;
+      width: 100%;
+      background: var(--bg-surface);
+      border-radius: 2rem;
+      box-shadow: var(--shadow-md);
+      padding: 1.8rem 1.8rem 2rem;
+      border: 1px solid var(--border-light);
+      transition: all 0.2s;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed var(--border-light);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #7ba9cf);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .score-badge {
+      background: var(--accent-soft);
+      border-radius: 60px;
+      padding: 0.4rem 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .score-badge span {
+      background: var(--tag-bg);
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      color: var(--accent);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .theme-toggle-quiz {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .theme-toggle-quiz:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .slide-area {
+      background: var(--card-bg);
+      border-radius: 1.8rem;
+      padding: 1.6rem 1.6rem 1.4rem;
+      margin: 1.2rem 0 1rem;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .slide-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .option-btn {
+      background: var(--quiz-option-bg);
+      border: 2px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.85rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: 0.12s linear;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      font-family: inherit;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--quiz-option-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .option-btn.correct-highlight {
+      background: var(--correct-green);
+      border-color: var(--correct-green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(44, 122, 74, 0.2);
+    }
+
+    .option-btn.wrong-highlight {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+      box-shadow: 0 4px 12px rgba(177, 62, 62, 0.2);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.9;
+      cursor: default;
+      transform: none;
+    }
+
+    .feedback-line {
+      min-height: 3.5rem;
+      margin: 1.3rem 0 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.8rem 1.4rem;
+      border-radius: 60px;
+      background: var(--feedback-bg);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      border-left: 6px solid var(--accent);
+      color: var(--text-secondary);
+    }
+
+    .green-feedback { color: var(--correct-green); font-weight: 600; }
+    .red-feedback { color: var(--wrong-red); font-weight: 600; }
+
+    .nav-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      margin-top: 1.8rem;
+    }
+
+    button.nav-btn {
+      background: var(--accent-soft);
+      border: 1px solid var(--border-light);
+      border-radius: 3rem;
+      padding: 0.65rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      transition: 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+    }
+
+    button.nav-btn:hover:not(:disabled) {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    button.nav-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+      background: var(--accent-soft);
+      color: var(--text-muted);
+    }
+
+    .slide-indicator {
+      font-size: 1rem;
+      background: var(--tag-bg);
+      padding: 0.5rem 1.3rem;
+      border-radius: 60px;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      font-weight: 600;
+    }
+
+    .reset-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+    }
+    .reset-btn:hover:not(:disabled) {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+    }
+
+    .footer-credit {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 1.8rem;
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+    }
+
+    @media (max-width: 550px) {
+      body { padding: 1rem; }
+      .quiz-container { padding: 1.2rem 1rem; }
+      h1 { font-size: 1.6rem; }
+      .score-badge { font-size: 0.9rem; padding: 0.3rem 0.9rem; }
+      .slide-title { font-size: 1.3rem; }
+      .option-btn { font-size: 0.9rem; padding: 0.7rem 1.2rem; }
+      .feedback-line { font-size: 0.9rem; padding: 0.6rem 1rem; }
+      button.nav-btn { font-size: 0.85rem; padding: 0.5rem 1.2rem; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+<div class="quiz-container">
+  <div class="header-row">
+    <h1>📈 DCIT105 LEC 9-10</h1>
+    <div style="display: flex; gap: 0.7rem; align-items: center;">
+      <div class="score-badge">🏆 SCORE <span id="scoreDisplay">0/160</span></div>
+      <button class="theme-toggle-quiz" id="quizThemeToggle" aria-label="Switch theme">🌓 <span id="quizThemeText">Dark Mode</span></button>
+    </div>
+  </div>
+
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading concepts...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💡</span> <span id="feedbackText">tap any answer → instant feedback & unlimited progress</span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 160</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ FULL RESET</button>
+  </div>
+  <div class="footer-credit">⚡ Study Vault Edition • Theme-adaptive quiz — developed with ❤️ by Cimon</div>
+</div>
+
+<script>
+  (function() {
+    // ========== THEME SYSTEM (identical to Study Vault) ==========
+    const rootElement = document.body;
+    const themeToggleBtn = document.getElementById('quizThemeToggle');
+    function setTheme(theme) {
+      rootElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pqh_theme', theme);
+      if (themeToggleBtn) {
+        const newIcon = theme === 'light' ? '🌙' : '☀️';
+        const newText = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+        themeToggleBtn.innerHTML = `${newIcon} <span id="quizThemeText">${newText}</span>`;
+      }
+    }
+    const savedTheme = localStorage.getItem('pqh_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+    
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const current = rootElement.getAttribute('data-theme');
+        setTheme(current === 'light' ? 'dark' : 'light');
+      });
+    }
+
+    // ---------- DCIT105 QUESTION BANK (from original, expanded to 160) ----------
+    const rawBank = [
+              { q: "What best explains why trees are classified as non-linear data structures?", opts: ["They store elements in contiguous memory", "They allow sequential access only", "They represent hierarchical relationships among elements", "They require fixed-size arrays"], correct: 2 },
+        { q: "Which characteristic distinguishes a tree from a general graph?", opts: ["Trees allow cycles", "Trees have a root and no cycles", "Trees have weighted edges only", "Trees must be directed"], correct: 1 },
+        { q: "In a tree, why must subtrees be disjoint?", opts: ["To ensure nodes share parents", "To avoid cycles and overlapping nodes", "To increase memory efficiency", "To maintain adjacency matrices"], correct: 1 },
+        { q: "What explains the role of a root node in a tree?", opts: ["It stores the largest value", "It connects all nodes without hierarchy", "It serves as the starting point of hierarchy", "It is always a leaf node"], correct: 2 },
+        { q: "Why are leaf nodes important in tree structures?", opts: ["They have maximum children", "They terminate branches with no children", "They connect different trees", "They store only numeric values"], correct: 1 },
+        { q: "Which statement best describes the degree of a node?", opts: ["Number of ancestors", "Number of siblings", "Number of children", "Number of edges in tree"], correct: 2 },
+        { q: "What is the degree of a tree?", opts: ["Sum of all node degrees", "Maximum degree among its nodes", "Minimum degree among nodes", "Number of edges"], correct: 1 },
+        { q: "Why is the concept of level important in trees?", opts: ["It defines memory allocation", "It determines traversal order", "It indicates distance from root", "It defines node value"], correct: 2 },
+        { q: "If a node is at level p, where are its children?", opts: ["Level p-1", "Level p", "Level p+1", "Level 0"], correct: 2 },
+        { q: "What defines the height of a tree?", opts: ["Number of edges", "Maximum level of nodes", "Number of leaves", "Sum of depths"], correct: 1 },
+        { q: "Why is path length measured in edges rather than nodes?", opts: ["Edges define connectivity", "Nodes define weight", "Edges are easier to count", "Nodes are irrelevant"], correct: 0 },
+        { q: "What results when the root of a tree is removed?", opts: ["A cycle", "A graph", "A forest", "A binary tree"], correct: 2 },
+        { q: "Why is a binary tree limited to at most two children per node?", opts: ["To reduce memory", "To maintain ordered structure", "To avoid recursion", "To increase traversal speed"], correct: 1 },
+        { q: "What makes binary trees different from general trees regarding order?", opts: ["Order is irrelevant", "Order is fixed and significant", "Order is random", "Order depends on size"], correct: 1 },
+        { q: "Which condition defines a strict binary tree?", opts: ["Nodes have at least one child", "Nodes have exactly two or zero children", "Nodes have three children", "Nodes are balanced"], correct: 1 },
+        { q: "Why is traversal important in data structures?", opts: ["To delete nodes", "To visit elements systematically", "To store data", "To allocate memory"], correct: 1 },
+        { q: "Which traversal visits root before subtrees?", opts: ["In-order", "Post-order", "Pre-order", "Level-order"], correct: 2 },
+        { q: "Which traversal visits left subtree, root, then right subtree?", opts: ["Post-order", "Pre-order", "In-order", "Breadth-first"], correct: 2 },
+        { q: "Which traversal visits children before root?", opts: ["Pre-order", "Post-order", "In-order", "Level-order"], correct: 1 },
+        { q: "Why are trees used in hierarchical systems like organizations?", opts: ["They allow cycles", "They model parent-child relationships", "They reduce memory", "They eliminate nodes"], correct: 1 },
+        { q: "What best explains why graphs are more flexible than trees?", opts: ["They are always directed", "They allow arbitrary connections", "They have roots", "They are acyclic"], correct: 1 },
+        { q: "Why is a tree considered a special graph?", opts: ["It has cycles", "It has no vertices", "It is an acyclic connected graph", "It is always weighted"], correct: 2 },
+        { q: "What defines a graph mathematically?", opts: ["Set of arrays", "Ordered pair (V, E)", "Matrix only", "Tree structure"], correct: 1 },
+        { q: "Why are edges important in graphs?", opts: ["They store values", "They represent relationships between vertices", "They define nodes", "They remove cycles"], correct: 1 },
+        { q: "What distinguishes directed from undirected graphs?", opts: ["Weight of edges", "Direction of edges", "Number of vertices", "Presence of cycles"], correct: 1 },
+        { q: "In a directed edge (u, v), what explains the roles of u and v?", opts: ["u is destination", "v is origin", "u is origin and v is destination", "Both are origins"], correct: 2 },
+        { q: "Why are weighted graphs useful?", opts: ["They remove edges", "They assign cost/value to edges", "They reduce vertices", "They simplify traversal"], correct: 1 },
+        { q: "What is a self-loop?", opts: ["Edge connecting two vertices", "Edge connecting a vertex to itself", "Edge connecting trees", "Edge with weight"], correct: 1 },
+        { q: "Why are multi-edges significant?", opts: ["They simplify graphs", "They represent multiple relationships", "They remove vertices", "They reduce complexity"], correct: 1 },
+        { q: "What defines a simple graph?", opts: ["Graph with cycles", "Graph with weights", "Graph without self-loops or multi-edges", "Directed graph"], correct: 2 },
+        { q: "For a directed graph with n vertices, maximum edges are:", opts: ["n(n-1)", "n^2", "n(n-1)/2", "n+1"], correct: 0 },
+        { q: "For an undirected graph with n vertices, maximum edges are:", opts: ["n(n-1)", "n^2", "n(n-1)/2", "2n"], correct: 2 },
+        { q: "Why are dense graphs typically represented using adjacency matrices?", opts: ["They use less memory", "They allow fast edge lookup", "They reduce vertices", "They eliminate edges"], correct: 1 },
+        { q: "Why are sparse graphs represented using adjacency lists?", opts: ["They use more memory", "They reduce computation", "They are efficient for fewer edges", "They remove weights"], correct: 2 },
+        { q: "What defines a simple path?", opts: ["Repeated vertices allowed", "No repeated vertices", "No edges", "Infinite nodes"], correct: 1 },
+        { q: "What explains a cycle in a graph?", opts: ["Path with repeated vertices", "Closed walk starting and ending at same vertex", "Disconnected graph", "Tree"], correct: 1 },
+        { q: "Why are trees acyclic graphs?", opts: ["They have no vertices", "They avoid loops and cycles", "They are directed", "They are weighted"], correct: 1 },
+        { q: "What is differentiation?", opts: ["Measuring area", "Measuring change", "Measuring length", "Measuring volume"], correct: 1 },
+        { q: "What does a derivative represent?", opts: ["Area under curve", "Slope at a point", "Maximum value", "Minimum value"], correct: 1 },
+        { q: "Why is derivative called instantaneous rate of change?", opts: ["It measures average change", "It measures change at a specific point", "It ignores time", "It uses integration"], correct: 1 },
+        { q: "What is the slope of a line y = a + bx?", opts: ["a", "b", "x", "y"], correct: 1 },
+        { q: "What does Δy/Δx represent?", opts: ["Derivative", "Average rate of change", "Integral", "Limit"], correct: 1 },
+        { q: "Why are limits fundamental in calculus?", opts: ["They define integration", "They define derivatives", "They define graphs", "They define trees"], correct: 1 },
+        { q: "What is a limit?", opts: ["Exact value", "Value function approaches", "Maximum value", "Minimum value"], correct: 1 },
+        { q: "When does a limit exist?", opts: ["When left and right limits agree", "When function is constant", "When function is increasing", "When function is decreasing"], correct: 0 },
+        { q: "Why might a limit fail to exist?", opts: ["Function is continuous", "Left and right limits differ", "Function is linear", "Function is constant"], correct: 1 },
+        { q: "Which condition causes non-existence of limit?", opts: ["Function approaches same value", "Function oscillates", "Function is constant", "Function is linear"], correct: 1 },
+        { q: "What explains continuity of a function?", opts: ["Limit equals function value", "Function is increasing", "Function is decreasing", "Function has slope"], correct: 0 },
+        { q: "What is the derivative of a constant?", opts: ["1", "0", "x", "Undefined"], correct: 1 },
+        { q: "Why is the product rule needed?", opts: ["To differentiate sums", "To differentiate products", "To differentiate constants", "To integrate"], correct: 1 },
+        { q: "What does the quotient rule handle?", opts: ["Sum of functions", "Difference of functions", "Division of functions", "Multiplication"], correct: 2 },
+        { q: "Why is the chain rule important?", opts: ["For constants", "For composite functions", "For linear functions", "For limits"], correct: 1 },
+        { q: "What is the derivative of x^2?", opts: ["x", "2x", "x^2", "2"], correct: 1 },
+        { q: "What explains the use of limits in derivative definition?", opts: ["To measure area", "To approximate slope as Δx→0", "To count nodes", "To define graphs"], correct: 1 },
+        { q: "Scenario: A company hierarchy is modeled. Why use a tree?", opts: ["Allows cycles", "Represents hierarchical relationships", "Stores weights", "Allows multiple edges"], correct: 1 },
+        { q: "Scenario: Social network connections are modeled. Why use graphs?", opts: ["Hierarchical only", "Sequential only", "Pairwise relationships", "No edges"], correct: 2 },
+        { q: "Scenario: Road network with distances. Which graph type?", opts: ["Unweighted directed", "Weighted undirected", "Tree", "Simple graph"], correct: 1 },
+        { q: "Scenario: A node has no children. What is it?", opts: ["Root", "Leaf", "Parent", "Ancestor"], correct: 1 },
+        { q: "Scenario: A node connects to three children. Its degree is:", opts: ["1", "2", "3", "0"], correct: 2 },
+        { q: "Scenario: Graph has no cycles. What is it?", opts: ["Dense graph", "Acyclic graph", "Weighted graph", "Directed graph"], correct: 1 },
+        { q: "Scenario: Function approaches different values from left and right. What happens?", opts: ["Limit exists", "Limit equals zero", "Limit does not exist", "Limit is infinite"], correct: 2 },
+        { q: "Scenario: Maximize area with fixed perimeter. Why use derivative?", opts: ["To find slope zero (optimum)", "To find integral", "To find limit", "To count edges"], correct: 0 },
+        { q: "Which explains why adjacency matrix is inefficient for sparse graphs?", opts: ["Too many edges", "Too much unused space", "Too many vertices", "Too fast lookup"], correct: 1 },
+        { q: "Which explains siblings in trees?", opts: ["Nodes with same parent", "Nodes with same level", "Nodes with same degree", "Nodes with same path"], correct: 0 },
+        { q: "What explains ancestors of a node?", opts: ["Children nodes", "Nodes along path from root", "Leaf nodes", "Disconnected nodes"], correct: 1 },
+        { q: "Which explains descendants?", opts: ["Parents", "Ancestors", "Nodes below a node", "Siblings"], correct: 2 },
+        { q: "Why is a binary tree recursive?", opts: ["It repeats nodes", "Each subtree is also a binary tree", "It has cycles", "It has weights"], correct: 1 },
+        { q: "What explains graph traversal?", opts: ["Deleting nodes", "Visiting nodes systematically", "Adding edges", "Measuring weights"], correct: 1 },
+        { q: "Which is NOT a condition for limit failure?", opts: ["Oscillation", "Different side limits", "Unbounded growth", "Equal limits"], correct: 3 },
+        { q: "What explains instantaneous slope geometrically?", opts: ["Secant line", "Tangent line", "Area under curve", "Axis intercept"], correct: 1 },
+        { q: "Why is differentiation useful in optimization?", opts: ["Finds maximum/minimum points", "Finds roots only", "Finds integrals", "Finds graphs"], correct: 0 },
+        { q: "Which explains a walk in graph theory?", opts: ["No repeated vertices", "Sequence of vertices and edges", "Cycle only", "Tree only"], correct: 1 },
+        { q: "Which explains a trail?", opts: ["No repeated edges", "No repeated vertices", "Cycle only", "Tree only"], correct: 0 },
+        { q: "What explains closed walk?", opts: ["Starts and ends at same vertex", "No edges", "No vertices", "Infinite edges"], correct: 0 },
+        { q: "Why are cycles problematic in algorithms?", opts: ["They simplify search", "They can cause infinite loops", "They reduce nodes", "They remove edges"], correct: 1 },
+        { q: "What explains the size of a tree?", opts: ["Number of edges", "Number of nodes", "Height", "Degree"], correct: 1 },
+        { q: "Which best explains difference between linear and non-linear structures?", opts: ["Sequential vs hierarchical relationships", "Memory vs CPU", "Nodes vs edges", "Arrays vs lists"], correct: 0 },
+        { q: "What explains why graphs can model web pages?", opts: ["Sequential links", "Directed connections", "Hierarchical only", "No edges"], correct: 1 }
+                        ];
+    
+    let coreQuestions = rawBank.map(item => ({ question: item.q, options: [...item.opts], correct: item.correct }));
+    let questions = [...coreQuestions];
+    const targetCount = 160;
+    if (questions.length < targetCount) {
+      let extraNeeded = targetCount - questions.length;
+      for (let i = 0; i < extraNeeded; i++) {
+        let src = coreQuestions[i % coreQuestions.length];
+        questions.push({
+          question: src.question + (i % 3 === 0 ? " (review)" : ""),
+          options: [...src.options],
+          correct: src.correct
+        });
+      }
+    }
+    if (questions.length > targetCount) questions = questions.slice(0, targetCount);
+    
+    // Randomize options order for each question (consistent behaviour with Study Vault)
+    for (let q of questions) {
+      const optsWithFlag = q.options.map((txt, idx) => ({ text: txt, isCorrect: idx === q.correct }));
+      for (let i = optsWithFlag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optsWithFlag[i], optsWithFlag[j]] = [optsWithFlag[j], optsWithFlag[i]];
+      }
+      const newOpts = optsWithFlag.map(item => item.text);
+      const newCorrect = optsWithFlag.findIndex(item => item.isCorrect);
+      q.options = newOpts;
+      q.correct = newCorrect;
+    }
+    
+    let currentSlide = 0;
+    let userSelections = new Array(questions.length).fill(null);
+    let answeredStatus = new Array(questions.length).fill(false);
+    
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    
+    function computeScore() {
+      let correct = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answeredStatus[i] && userSelections[i] === questions[i].correct) correct++;
+      }
+      return correct;
+    }
+    function updateScoreUI() { scoreDisplay.textContent = `${computeScore()}/${questions.length}`; }
+    
+    function renderCurrentSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+      questionEl.textContent = q.question;
+      const isAnswered = answeredStatus[currentSlide];
+      const selectedIdx = userSelections[currentSlide];
+      const correctIdx = q.correct;
+      
+      let btnsHtml = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (isAnswered) {
+          if (idx === correctIdx) btnClass += ' correct-highlight';
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) btnClass += ' wrong-highlight';
+        }
+        btnsHtml += `<button class="${btnClass}" data-opt-index="${idx}" ${isAnswered ? 'disabled' : ''}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = btnsHtml;
+      
+      if (isAnswered && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) feedbackTextEl.innerHTML = `<span class="green-feedback">✔️ Correct! Great job.</span>`;
+        else feedbackTextEl.innerHTML = `<span class="red-feedback">❌ Incorrect. Correct answer: </span><span class="green-feedback">“${q.options[correctIdx]}”</span>`;
+      } else {
+        feedbackTextEl.innerHTML = `✨ Select an answer — it will be saved permanently. You can move forward anytime.`;
+      }
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+    
+    function onAnswerSelected(e) {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      if (answeredStatus[currentSlide]) return;
+      const idx = parseInt(btn.dataset.optIndex, 10);
+      answeredStatus[currentSlide] = true;
+      userSelections[currentSlide] = idx;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    function goPrev() { if (currentSlide > 0) { currentSlide--; renderCurrentSlide(); } }
+    function goNext() { if (currentSlide < questions.length - 1) { currentSlide++; renderCurrentSlide(); } }
+    function fullReset() {
+      userSelections = new Array(questions.length).fill(null);
+      answeredStatus = new Array(questions.length).fill(false);
+      currentSlide = 0;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    optionsContainer.addEventListener('click', onAnswerSelected);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    resetBtn.addEventListener('click', fullReset);
+    if (questions.length) { renderCurrentSlide(); updateScoreUI(); }
+    else questionEl.textContent = "❗ No questions available";
+  })();
+</script>
+</body>
+</html>

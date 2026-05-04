@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCIT 101 Quiz</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #e4f0fd;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .quiz-container {
+    max-width: 950px;
+    width: 100%;
+    background: rgba(235, 247, 255, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 2.5rem;
+    box-shadow: 0 20px 35px rgba(100, 150, 200, 0.2), 0 8px 20px rgba(70, 120, 180, 0.15);
+    padding: 1.8rem 1.5rem 2rem;
+    border: 1px solid #c6e0ff;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px dashed #b8d6ff;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(130deg, #2c6288, #498a8d);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge {
+    background: #d4e9ff;
+    border-radius: 60px;
+    padding: 0.4rem 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2f5575;
+    border: 1px solid #9fc9ff;
+    box-shadow: inset 0 1px 4px #f0faff, 0 3px 0 #9cb9d9;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .score-badge span {
+    background: #bed9ff;
+    padding: 0.2rem 0.9rem;
+    border-radius: 40px;
+    color: #1a3e5c;
+    font-size: 1.4rem;
+    line-height: 1;
+    border: 1px solid #8ab9f0;
+  }
+
+  .slide-area {
+    background: #f1faff;
+    border-radius: 2rem;
+    padding: 1.8rem 1.5rem 1.5rem;
+    margin: 1.2rem 0 1rem;
+    border: 1px solid #c5ddff;
+    box-shadow: inset 0 4px 8px #e4f2ff, 0 6px 0 #b0cbea;
+  }
+
+  .slide-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1a4463;
+    text-shadow: 0 1px 2px #e4f0ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .option-btn {
+    background: #e6f2ff;
+    border: 2px solid #b6d5ff;
+    border-radius: 50px;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-align: left;
+    color: #1b3a54;
+    cursor: pointer;
+    transition: 0.12s linear;
+    box-shadow: 0 5px 0 #9cb9dc, 0 3px 10px rgba(120, 160, 210, 0.3);
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: #d5e9ff;
+    border-color: #88b8f0;
+    transform: scale(1.01);
+  }
+
+  .option-btn.correct-highlight {
+    background: #c8f0c8;
+    border-color: #479c47;
+    color: #155f1b;
+    box-shadow: 0 0 10px #a0e0a0, 0 5px 0 #3a854a;
+  }
+
+  .option-btn.wrong-highlight {
+    background: #ffe0e0;
+    border-color: #ff9494;
+    color: #a13131;
+    box-shadow: 0 0 10px #ffb5b5, 0 5px 0 #c75c5c;
+  }
+
+  .option-btn:disabled {
+    opacity: 0.95;
+    cursor: default;
+    filter: saturate(0.7);
+    transform: none;
+  }
+
+  .feedback-line {
+    min-height: 3rem;
+    margin: 1.4rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding: 0.8rem 1.4rem;
+    border-radius: 50px;
+    background: #e1f0ff;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-left: 8px solid #9ac2f0;
+    color: #234d6b;
+  }
+
+  .green-feedback { color: #1b7a3b; font-weight: 600; }
+  .red-feedback { color: #bc2c2c; font-weight: 600; }
+
+  .nav-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+  }
+
+  button.nav-btn {
+    background: #cde3ff;
+    border: none;
+    border-radius: 3rem;
+    padding: 0.7rem 1.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f4a70;
+    border-bottom: 4px solid #7fa3c7;
+    letter-spacing: 0.02rem;
+    cursor: pointer;
+    transition: 0.1s ease;
+    box-shadow: 0 5px 10px rgba(90, 130, 180, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  button.nav-btn:hover:not(:disabled) {
+    background: #b9d7ff;
+    border-bottom-color: #6087b0;
+    transform: translateY(-2px);
+  }
+
+  button.nav-btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+    filter: grayscale(0.3);
+    border-bottom-color: #9bb2cc;
+    transform: none;
+  }
+
+  .slide-indicator {
+    font-size: 1.2rem;
+    background: #e2f0ff;
+    padding: 0.5rem 1.4rem;
+    border-radius: 60px;
+    color: #26557c;
+    border: 1px solid #9ec3ec;
+    font-weight: 600;
+  }
+
+  .reset-btn {
+    background: #c2dcff;
+    border-bottom-color: #6f94bc;
+    padding: 0.7rem 1.6rem;
+  }
+
+  .footer-credit {
+    text-align: center;
+    color: #6183a3;
+    margin-top: 1.8rem;
+    font-size: 0.9rem;
+    border-top: 1px dashed #b6d3f2;
+    padding-top: 0.8rem;
+  }
+
+  @media (max-width: 550px) {
+    h1 { font-size: 1.7rem; }
+    .score-badge { font-size: 1rem; padding: 0.3rem 1rem; }
+    .score-badge span { font-size: 1.2rem; padding: 0.1rem 0.7rem; }
+    .slide-title { font-size: 1.35rem; }
+    .option-btn { font-size: 1rem; padding: 0.7rem 1.2rem; }
+    .feedback-line { font-size: 1rem; padding: 0.6rem 1rem; }
+    button.nav-btn { font-size: 1rem; padding: 0.6rem 1.3rem; }
+    .slide-indicator { font-size: 1rem; padding: 0.4rem 1rem; }
+    .quiz-container { padding: 1.2rem 1rem 1.5rem; }
+  }
+
+  @media (max-width: 450px) {
+    .nav-controls { justify-content: center; }
+    .header-row { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+
+  <h1 id="quizTitle">📘 DCIT 101</h1>
+
+  <!-- SESSION BUTTONS -->
+  <div style="display:flex; gap:10px; margin:10px 0; flex-wrap:wrap;">
+    <button onclick="switchSession('4-6')" class="nav-btn">LECT 4–6</button>
+    <button onclick="switchSession('7-9')" class="nav-btn">LECT 7–9</button>
+    <button onclick="switchSession('10-11')" class="nav-btn">LECT 10–11</button>
+  </div>
+
+  <div id="slideIndicator"></div>
+
+  <div id="questionText">Loading...</div>
+  <div id="optionsContainer"></div>
+  <div id="feedbackText"></div>
+
+  <br>
+  <button id="prevBtn">Prev</button>
+  <button id="nextBtn">Next</button>
+  <button id="resetBtn">Reset</button>
+
+  <h3>Score: <span id="scoreDisplay">0/0</span></h3>
+
+</div>
+
+<script>
+(function(){
+
+// ===== SESSION DETECTION =====
+const params = new URLSearchParams(window.location.search);
+const session = params.get("session") || "4-6";
+
+// update title
+document.getElementById("quizTitle").textContent =
+  `📘 DCIT 101 LECT ${session}`;
+
+// ===== SESSION BANKS (PASTE YOUR QUESTIONS HERE) =====
+ const banks = {
+
+    "4-6": [
+      // 👉 PASTE SESSION 4–6 rawBank HERE
+    
+
+        { q: "Computer hardware refers to", opts: ["internet services", "data stored online", "physical components of a computer system", "only software programs"], correct: 2 },
+
+        { q: "Which of the following is an input device?", opts: ["Printer", "Speaker", "Keyboard", "Monitor"], correct: 2 },
+
+        { q: "Processing devices are used to", opts: ["display output only", "convert raw data into meaningful information", "store data permanently", "input raw data"], correct: 1 },
+
+        { q: "Which of the following is an output device?", opts: ["Keyboard", "Printer", "Mouse", "Scanner"], correct: 1 },
+
+        { q: "Storage devices are used for", opts: ["data display", "data retention", "data transmission", "data processing"], correct: 1 },
+
+        { q: "A device driver is", opts: ["hardware component", "software that allows hardware to operate", "a storage device", "a type of memory"], correct: 1 },
+
+        { q: "RAM is best described as", opts: ["permanent storage", "direct access memory", "secondary storage", "read-only memory"], correct: 1 },
+
+        { q: "ROM is", opts: ["volatile memory", "temporary storage", "non-volatile memory", "cache memory"], correct: 2 },
+
+        { q: "Computer software is best defined as", opts: ["only hardware devices", "a collection of programs and instructions", "internet connectivity tools", "physical components of a computer"], correct: 1 },
+
+        { q: "Programming languages are used to", opts: ["connect networks", "develop software", "store data", "repair hardware"], correct: 1 },
+
+        { q: "Machine language consists of", opts: ["symbols only", "binary digits (0s and 1s)", "English statements", "mnemonics"], correct: 1 },
+
+        { q: "An assembler is used to", opts: ["execute programs", "convert assembly to machine code", "debug programs", "translate high-level language"], correct: 1 },
+
+        { q: "System software is designed to", opts: ["create documents", "run and manage the computer system", "browse the internet", "perform user tasks"], correct: 1 },
+
+        { q: "A database is", opts: ["a programming language", "an organized collection of data", "a random file", "a spreadsheet only"], correct: 1 },
+
+        { q: "Primary key is", opts: ["optional field", "duplicate values", "unique identifier", "foreign key"], correct: 2 },
+
+        { q: "A foreign key is used to", opts: ["store duplicates", "link tables", "delete records", "create tables"], correct: 1 },
+
+        { q: "Data redundancy means", opts: ["data lost", "data duplicated unnecessarily", "data encrypted", "data compressed"], correct: 1 },
+
+        { q: "SQL stands for", opts: ["System Query Language", "Structured Query Language", "Sequential Query Language", "Simple Query Logic"], correct: 1 }
+
+
+
+    ],
+
+    "7-9": [
+      // 👉 PASTE SESSION 7–9 rawBank HERE
+    
+
+    { q: "An algorithm is", opts: ["a programming language", "a step-by-step solution", "a database", "hardware"], correct: 1 },
+
+    { q: "A variable is", opts: ["constant value", "storage location that can change", "fixed number", "hardware"], correct: 1 },
+
+    { q: "A constant is", opts: ["value that changes", "value that remains the same", "variable", "function"], correct: 1 },
+
+    { q: "Syntax refers to", opts: ["rules of language", "hardware", "networking", "storage"], correct: 0 },
+
+    { q: "Debugging is", opts: ["writing code", "fixing errors", "executing", "designing"], correct: 1 },
+
+    { q: "Flowcharts are used to", opts: ["store data", "represent algorithms graphically", "execute programs", "debug code"], correct: 1 },
+
+    { q: "IPO stands for", opts: ["Input Processing Output", "Instruction Process Operation", "Input Program Output", "Internal Program Output"], correct: 0 },
+
+    { q: "A computer program is", opts: ["a database", "a hardware device", "a set of instructions for a computer", "a network"], correct: 2 },
+
+    { q: "A compiler is used to", opts: ["translate source code into machine code", "debug programs", "execute programs", "store data"], correct: 0 },
+
+    { q: "Syntax error occurs when", opts: ["logic is wrong", "grammar rules are broken", "data is missing", "program runs slowly"], correct: 1 },
+
+    { q: "The C programming language was developed by", opts: ["James Gosling", "Dennis Ritchie", "Bill Gates", "Guido van Rossum"], correct: 1 },
+
+    { q: "Python is", opts: ["machine language", "interpreted language", "assembly language", "compiled only"], correct: 1 },
+
+    { q: "Assignment in pseudocode is represented by", opts: ["==", ":=", "=", "!="], correct: 1 },
+
+    { q: "IF statement is used for", opts: ["selection", "looping", "input", "output"], correct: 0 },
+
+    { q: "A for loop is used for", opts: ["assignment", "input", "repetition with count", "selection"], correct: 2 },
+
+    { q: "A stack follows", opts: ["FIFO", "random", "LIFO", "sequential"], correct: 2 },
+
+    { q: "Binary search works on", opts: ["arrays only", "unsorted list", "linked list only", "sorted list"], correct: 3 }
+
+
+    ],
+
+    "10-11": [
+      // 👉 PASTE SESSION 10–11 rawBank HERE
+    
+
+    { q: "Software process models are used to", opts: ["execute programs", "organize project activities", "store data", "debug code"], correct: 1 },
+
+    { q: "The waterfall model is characterized by", opts: ["no testing", "sequential stages", "random stages", "no design"], correct: 1 },
+
+    { q: "Agile development focuses on", opts: ["continuous delivery and flexibility", "fixed design only", "no testing", "slow delivery"], correct: 0 },
+
+    { q: "Testing ensures that", opts: ["program works correctly", "data is stored", "code is written", "hardware is installed"], correct: 0 },
+
+    { q: "Debugging is", opts: ["writing code", "executing program", "fixing program errors", "designing"], correct: 2 },
+
+    { q: "A computer security risk is", opts: ["any event causing loss or damage", "safe event", "software update", "hardware upgrade"], correct: 0 },
+
+    { q: "Cybercrime refers to", opts: ["internet-based illegal acts", "offline crime", "hardware faults", "software updates"], correct: 0 },
+
+    { q: "A virus is", opts: ["database", "program that infects and alters system", "hardware damage", "network cable"], correct: 1 },
+
+    { q: "A worm spreads by", opts: ["user action", "automatic replication", "manual copying", "hardware"], correct: 1 },
+
+    { q: "A firewall is used to", opts: ["run programs", "store data", "protect network from intrusions", "design systems"], correct: 2 },
+
+    { q: "Encryption converts data into", opts: ["unreadable form", "visible form", "numbers only", "images"], correct: 0 },
+
+    { q: "A VPN provides", opts: ["secure connection over internet", "faster speed", "free data", "public access"], correct: 0 },
+
+    { q: "Risk assessment is used to", opts: ["identify security threats", "delete files", "run programs", "store data"], correct: 0 }
+
+
+      
+    ]
+
+  };
+
+// select bank
+const rawBank = banks[session] || banks["4-6"];
+
+// ===== SAFETY CHECK =====
+if (!rawBank || rawBank.length === 0) {
+  document.getElementById("questionText").textContent =
+    "❗ No questions available for this session";
+  return;
+}
+
+// ===== PREP QUESTIONS =====
+let questions = rawBank.map(q => ({
+  question: q.q,
+  options: q.opts,
+  correct: q.correct
+}));
+
+let current = 0;
+let score = 0;
+let answered = new Array(questions.length).fill(false);
+
+// DOM
+const qEl = document.getElementById("questionText");
+const optEl = document.getElementById("optionsContainer");
+const scoreEl = document.getElementById("scoreDisplay");
+const indicator = document.getElementById("slideIndicator");
+
+// ===== RENDER =====
+function render() {
+  const q = questions[current];
+
+  qEl.textContent = q.question;
+  indicator.textContent = `${current+1} / ${questions.length}`;
+
+  optEl.innerHTML = "";
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.className = "option-btn";
+
+    btn.onclick = () => {
+      if (answered[current]) return;
+
+      answered[current] = true;
+
+      if (i === q.correct) {
+        btn.classList.add("correct-highlight");
+        score++;
+      } else {
+        btn.classList.add("wrong-highlight");
+      }
+
+      updateScore();
+    };
+
+    optEl.appendChild(btn);
+  });
+}
+
+// ===== SCORE =====
+function updateScore(){
+  scoreEl.textContent = `${score}/${questions.length}`;
+}
+
+// ===== NAV =====
+document.getElementById("prevBtn").onclick = () => {
+  if (current > 0) {
+    current--;
+    render();
+  }
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  if (current < questions.length - 1) {
+    current++;
+    render();
+  }
+};
+
+document.getElementById("resetBtn").onclick = () => {
+  score = 0;
+  current = 0;
+  answered.fill(false);
+  render();
+  updateScore();
+};
+
+// ===== SESSION SWITCH =====
+window.switchSession = function(s){
+  const url = new URL(window.location.href);
+  url.searchParams.set("session", s);
+  window.location.href = url.toString();
+};
+
+// ===== START =====
+render();
+updateScore();
+
+})();
+</script>
+
+</body>
+</html>    

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+  <title>DCIT105 </title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    /* ========== LIGHT THEME (Study Vault colors) ========== */
+    :root,
+    [data-theme="light"] {
+      --bg-body: #f4f7fc;
+      --bg-surface: #ffffff;
+      --card-bg: #ffffff;
+      --text-primary: #0a1e2f;
+      --text-secondary: #2c3e50;
+      --text-muted: #5a6e7c;
+      --border-light: #dee4ec;
+      --accent: #2c7da0;
+      --accent-hover: #1f5e7e;
+      --accent-soft: #eaf4f8;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      --footer-bg: #eef2f6;
+      --tag-bg: #e3f0f5;
+      --card-hover-border: #9ac0d0;
+      --quiz-option-bg: #ffffff;
+      --quiz-option-hover: #eaf4f8;
+      --correct-green: #2c7a4a;
+      --wrong-red: #b13e3e;
+      --feedback-bg: #eef4fa;
+    }
+
+    /* ========== DARK THEME (Study Vault colors) ========== */
+    [data-theme="dark"] {
+      --bg-body: #0a121c;
+      --bg-surface: #15232e;
+      --card-bg: #1b2c3a;
+      --text-primary: #edf2f7;
+      --text-secondary: #cbd9e6;
+      --text-muted: #95adc7;
+      --border-light: #2a3f4e;
+      --accent: #5faff0;
+      --accent-hover: #7bc2ff;
+      --accent-soft: #1e3a47;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      --footer-bg: #0c1722;
+      --tag-bg: #1f3e4c;
+      --card-hover-border: #3c7b9b;
+      --quiz-option-bg: #1b2c3a;
+      --quiz-option-hover: #2a3f50;
+      --correct-green: #62b87a;
+      --wrong-red: #e08585;
+      --feedback-bg: #1a2c3a;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .quiz-container {
+      max-width: 950px;
+      width: 100%;
+      background: var(--bg-surface);
+      border-radius: 2rem;
+      box-shadow: var(--shadow-md);
+      padding: 1.8rem 1.8rem 2rem;
+      border: 1px solid var(--border-light);
+      transition: all 0.2s;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed var(--border-light);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #7ba9cf);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .score-badge {
+      background: var(--accent-soft);
+      border-radius: 60px;
+      padding: 0.4rem 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .score-badge span {
+      background: var(--tag-bg);
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      color: var(--accent);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .theme-toggle-quiz {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .theme-toggle-quiz:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .slide-area {
+      background: var(--card-bg);
+      border-radius: 1.8rem;
+      padding: 1.6rem 1.6rem 1.4rem;
+      margin: 1.2rem 0 1rem;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .slide-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .option-btn {
+      background: var(--quiz-option-bg);
+      border: 2px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.85rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: 0.12s linear;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      font-family: inherit;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--quiz-option-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .option-btn.correct-highlight {
+      background: var(--correct-green);
+      border-color: var(--correct-green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(44, 122, 74, 0.2);
+    }
+
+    .option-btn.wrong-highlight {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+      box-shadow: 0 4px 12px rgba(177, 62, 62, 0.2);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.9;
+      cursor: default;
+      transform: none;
+    }
+
+    .feedback-line {
+      min-height: 3.5rem;
+      margin: 1.3rem 0 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.8rem 1.4rem;
+      border-radius: 60px;
+      background: var(--feedback-bg);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      border-left: 6px solid var(--accent);
+      color: var(--text-secondary);
+    }
+
+    .green-feedback { color: var(--correct-green); font-weight: 600; }
+    .red-feedback { color: var(--wrong-red); font-weight: 600; }
+
+    .nav-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      margin-top: 1.8rem;
+    }
+
+    button.nav-btn {
+      background: var(--accent-soft);
+      border: 1px solid var(--border-light);
+      border-radius: 3rem;
+      padding: 0.65rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      transition: 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+    }
+
+    button.nav-btn:hover:not(:disabled) {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    button.nav-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+      background: var(--accent-soft);
+      color: var(--text-muted);
+    }
+
+    .slide-indicator {
+      font-size: 1rem;
+      background: var(--tag-bg);
+      padding: 0.5rem 1.3rem;
+      border-radius: 60px;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      font-weight: 600;
+    }
+
+    .reset-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+    }
+    .reset-btn:hover:not(:disabled) {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+    }
+
+    .footer-credit {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 1.8rem;
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+    }
+
+    @media (max-width: 550px) {
+      body { padding: 1rem; }
+      .quiz-container { padding: 1.2rem 1rem; }
+      h1 { font-size: 1.6rem; }
+      .score-badge { font-size: 0.9rem; padding: 0.3rem 0.9rem; }
+      .slide-title { font-size: 1.3rem; }
+      .option-btn { font-size: 0.9rem; padding: 0.7rem 1.2rem; }
+      .feedback-line { font-size: 0.9rem; padding: 0.6rem 1rem; }
+      button.nav-btn { font-size: 0.85rem; padding: 0.5rem 1.2rem; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+<div class="quiz-container">
+  <div class="header-row">
+    <h1>📈 DCIT105 LEC 5-8</h1>
+    <div style="display: flex; gap: 0.7rem; align-items: center;">
+      <div class="score-badge">🏆 SCORE <span id="scoreDisplay">0/160</span></div>
+      <button class="theme-toggle-quiz" id="quizThemeToggle" aria-label="Switch theme">🌓 <span id="quizThemeText">Dark Mode</span></button>
+    </div>
+  </div>
+
+  <div class="slide-area" id="slideArea">
+    <div class="slide-title" id="questionText">Loading concepts...</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="feedback-line" id="feedbackMessage">
+      <span>💡</span> <span id="feedbackText">tap any answer → instant feedback & unlimited progress</span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
+    <div class="slide-indicator" id="slideIndicator">1 / 160</div>
+    <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ FULL RESET</button>
+  </div>
+  <div class="footer-credit">⚡ Study Vault Edition • Theme-adaptive quiz — developed with ❤️ by Cimon</div>
+</div>
+
+<script>
+  (function() {
+    // ========== THEME SYSTEM (identical to Study Vault) ==========
+    const rootElement = document.body;
+    const themeToggleBtn = document.getElementById('quizThemeToggle');
+    function setTheme(theme) {
+      rootElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pqh_theme', theme);
+      if (themeToggleBtn) {
+        const newIcon = theme === 'light' ? '🌙' : '☀️';
+        const newText = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+        themeToggleBtn.innerHTML = `${newIcon} <span id="quizThemeText">${newText}</span>`;
+      }
+    }
+    const savedTheme = localStorage.getItem('pqh_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+    
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const current = rootElement.getAttribute('data-theme');
+        setTheme(current === 'light' ? 'dark' : 'light');
+      });
+    }
+
+    // ---------- DCIT105 QUESTION BANK (from original, expanded to 160) ----------
+    const rawBank = [
+                        { q: "What is a set?", opts: ["An ordered list of numbers", "A collection of objects or elements", "A type of function", "A logical operator"], correct: 1 },
+        { q: "Which statement best explains why sets are fundamental in discrete mathematics?", opts: ["They simplify arithmetic operations", "They form the basis for structures like relations and graphs", "They replace logic systems", "They reduce computation time"], correct: 1 },
+        { q: "What does the notation a ∈ A mean?", opts: ["a is equal to A", "a is a subset of A", "a belongs to A", "a is not in A"], correct: 2 },
+        { q: "Which of the following represents that an element is NOT in a set?", opts: ["∈", "⊂", "∉", "="], correct: 2 },
+        { q: "What is the roster method of representing sets?", opts: ["Describing properties of elements", "Listing all elements inside braces", "Using equations", "Using graphs"], correct: 1 },
+        { q: "Which is an example of set-builder notation?", opts: ["{1,2,3,4}", "{x | x is even}", "{a,b,c}", "{1...10}"], correct: 1 },
+        { q: "Why is set-builder notation useful?", opts: ["It reduces the number of elements", "It describes sets using properties", "It eliminates variables", "It simplifies operations"], correct: 1 },
+        { q: "Which of the following is the set of natural numbers?", opts: ["{1,2,3,...}", "{0,1,2,...}", "{-1,0,1,...}", "{1/2,3/4,...}"], correct: 1 },
+        { q: "Which number set includes negative numbers?", opts: ["Natural numbers", "Integers", "Rational numbers only", "Real numbers only"], correct: 1 },
+        { q: "What defines rational numbers?", opts: ["Numbers with no decimals", "Numbers that can be written as p/q", "Only integers", "Only positive numbers"], correct: 1 },
+        { q: "Why are irrational numbers different?", opts: ["They are integers", "They cannot be written as fractions", "They are always negative", "They are finite decimals"], correct: 1 },
+        { q: "Which set is closed under addition and multiplication?", opts: ["Natural numbers", "Integers", "Rationals", "Complex numbers"], correct: 0 },
+        { q: "Which operation is NOT closed in integers?", opts: ["Addition", "Subtraction", "Multiplication", "Division"], correct: 3 },
+        { q: "What is cardinality of a set?", opts: ["Type of set", "Number of elements in a set", "Subset size", "Power set"], correct: 1 },
+        { q: "What is a subset?", opts: ["A set with fewer elements", "A set whose elements belong to another set", "A disjoint set", "A union of sets"], correct: 1 },
+        { q: "What distinguishes a proper subset?", opts: ["Contains all elements", "Equal to original set", "Strictly smaller than original set", "Contains no elements"], correct: 2 },
+        { q: "What is a power set?", opts: ["Set of all subsets", "Set of numbers", "Set of operations", "Set of relations"], correct: 0 },
+        { q: "How many subsets does a set with n elements have?", opts: ["n", "2n", "n²", "2^n"], correct: 3 },
+        { q: "What is an ordered pair?", opts: ["Set of elements", "Pair where order matters", "Subset", "Function"], correct: 1 },
+        { q: "What is Cartesian product A × B?", opts: ["Union of A and B", "Intersection of A and B", "Set of ordered pairs", "Difference of sets"], correct: 2 },
+        { q: "Scenario: A = {1,2}, B = {a,b}. What is A × B?", opts: ["{(1,a),(1,b),(2,a),(2,b)}", "{1,2,a,b}", "{(a,1),(b,2)}", "{(1,2),(a,b)}"], correct: 0 },
+        { q: "What is a function?", opts: ["Relation with many outputs", "Mapping assigning each input exactly one output", "Set of values", "Operation on sets"], correct: 1 },
+        { q: "Why must a function assign a unique output?", opts: ["To simplify notation", "To ensure consistency in mapping", "To reduce domain size", "To avoid variables"], correct: 1 },
+        { q: "What is the domain of a function?", opts: ["Set of outputs", "Set of inputs", "Set of operations", "Set of images"], correct: 1 },
+        { q: "What is the codomain?", opts: ["Actual outputs", "Possible outputs", "Input values", "Subset"], correct: 1 },
+        { q: "What is the range?", opts: ["All possible outputs", "All inputs", "Actual outputs produced", "All relations"], correct: 2 },
+        { q: "Which explains difference between codomain and range?", opts: ["They are always equal", "Range is subset of codomain", "Codomain is subset of range", "They are unrelated"], correct: 1 },
+        { q: "What is a one-to-one function?", opts: ["Multiple inputs map to one output", "Each input maps to unique output and outputs are distinct", "Outputs repeat", "No outputs"], correct: 1 },
+        { q: "What is an onto function?", opts: ["Covers entire codomain", "Has no outputs", "Maps to subset only", "Maps randomly"], correct: 0 },
+        { q: "What is a bijection?", opts: ["One-to-one only", "Onto only", "Both one-to-one and onto", "Neither"], correct: 2 },
+        { q: "Why is bijection important?", opts: ["Ensures reversibility", "Reduces computation", "Simplifies sets", "Eliminates mapping"], correct: 0 },
+        { q: "What is inverse of a function?", opts: ["Reverse mapping", "Same function", "Composition", "Domain"], correct: 0 },
+        { q: "What is function composition?", opts: ["Adding functions", "Applying one function after another", "Multiplying outputs", "Finding inverse"], correct: 1 },
+        { q: "What is factorial of n?", opts: ["n+n", "n×(n-1)...×1", "n²", "n/2"], correct: 1 },
+        { q: "What does floor function do?", opts: ["Rounds up", "Rounds down to nearest integer", "Returns decimal", "Squares value"], correct: 1 },
+        { q: "What does ceiling function do?", opts: ["Rounds down", "Rounds up to nearest integer", "Removes decimals", "Multiplies"], correct: 1 },
+        { q: "What is a matrix?", opts: ["Single number", "Array of numbers in rows and columns", "Set of functions", "Vector only"], correct: 1 },
+        { q: "What is a vector?", opts: ["Matrix with one row or column", "Set of numbers", "Function", "Scalar"], correct: 0 },
+        { q: "What defines matrix dimensions?", opts: ["Sum of rows", "Rows × columns", "Difference", "Product only"], correct: 1 },
+        { q: "What is a square matrix?", opts: ["Equal rows and columns", "More rows than columns", "More columns than rows", "No rows"], correct: 0 },
+        { q: "What is a diagonal matrix?", opts: ["All elements same", "Only diagonal non-zero", "All zero", "Rectangular"], correct: 1 },
+        { q: "What is identity matrix?", opts: ["All zeros", "Ones on diagonal, zeros elsewhere", "Random numbers", "Only ones"], correct: 1 },
+        { q: "What is null matrix?", opts: ["All ones", "All zeros", "Diagonal only", "Random"], correct: 1 },
+        { q: "What is scalar matrix?", opts: ["Different diagonal values", "Same diagonal values", "All zeros", "Non-square"], correct: 1 },
+        { q: "What is transpose of a matrix?", opts: ["Flip rows and columns", "Add elements", "Multiply elements", "Reverse order"], correct: 0 },
+        { q: "When are two matrices equal?", opts: ["Same size only", "Same values only", "Same size and corresponding elements equal", "Same determinant"], correct: 2 },
+        { q: "What is determinant?", opts: ["Matrix addition", "Scalar value of matrix", "Vector", "Subset"], correct: 1 },
+        { q: "What is recursion?", opts: ["Looping structure", "Defining object in terms of itself", "Binary relation", "Set operation"], correct: 1 },
+        { q: "Why is recursion useful?", opts: ["Simplifies iterative processes", "Eliminates variables", "Avoids functions", "Reduces memory"], correct: 0 },
+        { q: "What are the two steps in recursion?", opts: ["Start and end", "Basis and recursive step", "Input and output", "Loop and break"], correct: 1 },
+        { q: "What is base case?", opts: ["Final output", "Initial condition", "Loop condition", "Error"], correct: 1 },
+        { q: "What is recursive step?", opts: ["Stopping condition", "Definition using smaller inputs", "Output mapping", "Loop"], correct: 1 },
+        { q: "What is Fibonacci sequence defined by?", opts: ["Multiplication", "Addition of previous two terms", "Subtraction", "Division"], correct: 1 },
+        { q: "What is a relation?", opts: ["Function only", "Subset of Cartesian product", "Union of sets", "Intersection"], correct: 1 },
+        { q: "What is a binary relation?", opts: ["Relation of three sets", "Relation between two sets", "Function only", "Set only"], correct: 1 },
+        { q: "What does (a,b) ∈ R mean?", opts: ["a not related to b", "a related to b", "a equals b", "a subset of b"], correct: 1 },
+        { q: "What is reflexive property?", opts: ["aRb implies bRa", "aRa for all elements", "aRb and bRc implies aRc", "None"], correct: 1 },
+        { q: "What is symmetric property?", opts: ["aRb implies bRa", "aRa", "Transitive", "None"], correct: 0 },
+        { q: "What is transitive property?", opts: ["aRb implies bRa", "aRb and bRc implies aRc", "aRa", "None"], correct: 1 },
+        { q: "What is antisymmetric property?", opts: ["aRb and bRa implies a=b", "aRa", "Symmetric", "None"], correct: 0 },
+        { q: "What is equivalence relation?", opts: ["Only reflexive", "Reflexive, symmetric, transitive", "Only transitive", "Only symmetric"], correct: 1 },
+        { q: "Scenario: If every student maps to one grade, what is this?", opts: ["Relation", "Function", "Subset", "Matrix"], correct: 1 },
+        { q: "Scenario: If two inputs map to same output, is it valid function?", opts: ["Yes", "No", "Only sometimes", "Undefined"], correct: 0 },
+        { q: "Scenario: If one input maps to two outputs, what happens?", opts: ["Valid function", "Invalid function", "Subset", "Relation only"], correct: 1 },
+        { q: "Why must functions avoid multiple outputs for one input?", opts: ["To maintain uniqueness", "To simplify code", "To reduce size", "To increase speed"], correct: 0 },
+        { q: "Which concept models relationships in databases?", opts: ["Functions", "Relations", "Matrices", "Vectors"], correct: 1 },
+        { q: "What explains recursive definitions in sequences?", opts: ["Using previous terms to define next", "Using constants only", "Using sets only", "Using matrices"], correct: 0 },
+        { q: "Which is an application of relations?", opts: ["Image processing", "Database design", "Binary conversion", "Signal processing"], correct: 1 }                 
+                ];
+    
+    let coreQuestions = rawBank.map(item => ({ question: item.q, options: [...item.opts], correct: item.correct }));
+    let questions = [...coreQuestions];
+    const targetCount = 160;
+    if (questions.length < targetCount) {
+      let extraNeeded = targetCount - questions.length;
+      for (let i = 0; i < extraNeeded; i++) {
+        let src = coreQuestions[i % coreQuestions.length];
+        questions.push({
+          question: src.question + (i % 3 === 0 ? " (review)" : ""),
+          options: [...src.options],
+          correct: src.correct
+        });
+      }
+    }
+    if (questions.length > targetCount) questions = questions.slice(0, targetCount);
+    
+    // Randomize options order for each question (consistent behaviour with Study Vault)
+    for (let q of questions) {
+      const optsWithFlag = q.options.map((txt, idx) => ({ text: txt, isCorrect: idx === q.correct }));
+      for (let i = optsWithFlag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optsWithFlag[i], optsWithFlag[j]] = [optsWithFlag[j], optsWithFlag[i]];
+      }
+      const newOpts = optsWithFlag.map(item => item.text);
+      const newCorrect = optsWithFlag.findIndex(item => item.isCorrect);
+      q.options = newOpts;
+      q.correct = newCorrect;
+    }
+    
+    let currentSlide = 0;
+    let userSelections = new Array(questions.length).fill(null);
+    let answeredStatus = new Array(questions.length).fill(false);
+    
+    const questionEl = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackTextEl = document.getElementById('feedbackText');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    
+    function computeScore() {
+      let correct = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answeredStatus[i] && userSelections[i] === questions[i].correct) correct++;
+      }
+      return correct;
+    }
+    function updateScoreUI() { scoreDisplay.textContent = `${computeScore()}/${questions.length}`; }
+    
+    function renderCurrentSlide() {
+      const q = questions[currentSlide];
+      if (!q) return;
+      questionEl.textContent = q.question;
+      const isAnswered = answeredStatus[currentSlide];
+      const selectedIdx = userSelections[currentSlide];
+      const correctIdx = q.correct;
+      
+      let btnsHtml = '';
+      q.options.forEach((opt, idx) => {
+        let btnClass = 'option-btn';
+        if (isAnswered) {
+          if (idx === correctIdx) btnClass += ' correct-highlight';
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) btnClass += ' wrong-highlight';
+        }
+        btnsHtml += `<button class="${btnClass}" data-opt-index="${idx}" ${isAnswered ? 'disabled' : ''}>${opt}</button>`;
+      });
+      optionsContainer.innerHTML = btnsHtml;
+      
+      if (isAnswered && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) feedbackTextEl.innerHTML = `<span class="green-feedback">✔️ Correct! Great job.</span>`;
+        else feedbackTextEl.innerHTML = `<span class="red-feedback">❌ Incorrect. Correct answer: </span><span class="green-feedback">“${q.options[correctIdx]}”</span>`;
+      } else {
+        feedbackTextEl.innerHTML = `✨ Select an answer — it will be saved permanently. You can move forward anytime.`;
+      }
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === questions.length - 1);
+      slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
+    }
+    
+    function onAnswerSelected(e) {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      if (answeredStatus[currentSlide]) return;
+      const idx = parseInt(btn.dataset.optIndex, 10);
+      answeredStatus[currentSlide] = true;
+      userSelections[currentSlide] = idx;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    function goPrev() { if (currentSlide > 0) { currentSlide--; renderCurrentSlide(); } }
+    function goNext() { if (currentSlide < questions.length - 1) { currentSlide++; renderCurrentSlide(); } }
+    function fullReset() {
+      userSelections = new Array(questions.length).fill(null);
+      answeredStatus = new Array(questions.length).fill(false);
+      currentSlide = 0;
+      renderCurrentSlide();
+      updateScoreUI();
+    }
+    
+    optionsContainer.addEventListener('click', onAnswerSelected);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    resetBtn.addEventListener('click', fullReset);
+    if (questions.length) { renderCurrentSlide(); updateScoreUI(); }
+    else questionEl.textContent = "❗ No questions available";
+  })();
+</script>
+</body>
+</html>
