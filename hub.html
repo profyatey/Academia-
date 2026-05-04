@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lecture Modules | PastQuestion Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* ========== LIGHT THEME (Study Vault colors) ========== */
+    :root,
+    [data-theme="light"] {
+      --bg-body: #f4f7fc;
+      --bg-surface: #ffffff;
+      --card-bg: #ffffff;
+      --text-primary: #0a1e2f;
+      --text-secondary: #2c3e50;
+      --text-muted: #5a6e7c;
+      --border-light: #dee4ec;
+      --accent: #2c7da0;
+      --accent-hover: #1f5e7e;
+      --accent-soft: #eaf4f8;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      --footer-bg: #eef2f6;
+      --tag-bg: #e3f0f5;
+      --card-hover-border: #9ac0d0;
+    }
+
+    /* ========== DARK THEME (Study Vault colors) ========== */
+    [data-theme="dark"] {
+      --bg-body: #0a121c;
+      --bg-surface: #15232e;
+      --card-bg: #1b2c3a;
+      --text-primary: #edf2f7;
+      --text-secondary: #cbd9e6;
+      --text-muted: #95adc7;
+      --border-light: #2a3f4e;
+      --accent: #5faff0;
+      --accent-hover: #7bc2ff;
+      --accent-soft: #1e3a47;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      --footer-bg: #0c1722;
+      --tag-bg: #1f3e4c;
+      --card-hover-border: #3c7b9b;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* header & nav */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 1.5rem 0 1rem;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 2rem;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #7ba9cf);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .logo p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .back-link {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: scale(0.97);
+    }
+
+    .theme-toggle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      backdrop-filter: blur(2px);
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: scale(0.97);
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 1.5rem 0 2rem;
+    }
+
+    .hero h2 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--accent), #9ac6df);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 650px;
+      margin: 1rem auto 0;
+    }
+
+    .info-badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-top: 1rem;
+      border: 1px solid var(--border-light);
+    }
+
+    /* Section Headers */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 1.8rem 0 1.2rem 0;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60%;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 4px;
+    }
+
+    /* Card Grid (exactly four cards) */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.8rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--card-hover-border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-code {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--tag-bg);
+      display: inline-block;
+      width: fit-content;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.3px;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin: 0.5rem 0 1rem;
+      line-height: 1.4;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Study materials info block */
+    .material-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 1.5rem;
+      padding: 1.6rem;
+      margin: 1rem 0 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .material-info h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .material-info p {
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    .material-badge {
+      background: var(--accent-soft);
+      padding: 0.5rem 1rem;
+      border-radius: 80px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--footer-bg);
+      margin-top: 4rem;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border-light);
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-note {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .developer {
+      font-weight: 600;
+      background: var(--accent-soft);
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      display: inline-block;
+      color: var(--accent);
+    }
+
+    hr {
+      border-color: var(--border-light);
+      margin: 1rem 0;
+    }
+
+    .disclaimer-note {
+      font-size: 0.75rem;
+      text-align: center;
+      margin-top: 1rem;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 0.7rem;
+      border-radius: 2rem;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 0 1.2rem;
+      }
+      .hero h2 {
+        font-size: 2rem;
+      }
+      .section-title {
+        font-size: 1.5rem;
+      }
+      .footer-content {
+        flex-direction: column;
+        justify-content: center;
+      }
+      .card-title {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="container">
+    <!-- navbar with back link + theme toggle -->
+    <div class="navbar">
+      <div class="logo">
+        <h1>📚 PastQuestion Hub</h1>
+        <p>Lecture module explorer • slides-based revision</p>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="back-link" id="backToMainLink">← Course Hub</a>
+        <button class="theme-toggle" id="themeToggleBtn" aria-label="Switch between light and dark mode">
+          🌓 <span id="themeText">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- hero section -->
+    <div class="hero">
+      <h2>📖 Modular Lecture Blocks</h2>
+      <p>Access curated past questions & key topics organized by lecture ranges  LEC 1–11</p>
+      <div class="info-badge">🎯 Based on official slides & past exam trends</div>
+    </div>
+
+    <!-- Four lecture cards -->
+    <div>
+      <h2 class="section-title">📌 Select your lecture module</h2>
+      <div class="courses-grid" id="lectureGrid">
+        <!-- LEC 1-3 Card -->
+        <div class="card" data-lecture-range="1-3">
+          <span class="card-code">Foundational Block</span>
+          <div class="card-title">LEC 1-3</div>
+          <div class="card-desc">Introduction to computing, algorithms, flowcharts, variables, data types, and basic I/O operations. Core concepts from first three weeks.</div>
+          <div class="card-footer">📄 Click to open past questions →</div>
+        </div>
+        <!-- LEC 4-6 Card -->
+        <div class="card" data-lecture-range="4-6">
+          <span class="card-code">Core Logic</span>
+          <div class="card-title">LEC 4-6</div>
+          <div class="card-desc">Conditional statements (if/else), loops (while, for), functions, parameters, and basic problem-solving strategies.</div>
+          <div class="card-footer">📄 Click to open past questions →</div>
+        </div>
+        <!-- LEC 7-9 Card -->
+        <div class="card" data-lecture-range="7-9">
+          <span class="card-code">Data Structures</span>
+          <div class="card-title">LEC 7-9</div>
+          <div class="card-desc">Arrays, strings, list manipulation, searching/sorting basics, and modular program design.</div>
+          <div class="card-footer">📄 Click to open past questions →</div>
+        </div>
+        <!-- LEC 10-11 Card -->
+        <div class="card" data-lecture-range="10-11">
+          <span class="card-code">Advanced & Review</span>
+          <div class="card-title">LEC 10-11</div>
+          <div class="card-desc">File handling, structures/dictionaries, error handling, and comprehensive exam-focused review.</div>
+          <div class="card-footer">📄 Click to open past questions →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info block: source integrity (same style as original) -->
+  
+
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-note">📅 Smart repository for university success</div>
+        <div class="developer">Developed by Cimon</div>
+        <div class="footer-note">✨ Study in style • module-based past questions</div>
+      </div>
+      <hr>
+      <div style="font-size: 0.75rem; color: var(--text-muted);">© 2025 PastQuestionHub — All materials referenced from lecture slide decks & faculty resources.</div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // ----- THEME HANDLING -----
+      const themeBtn = document.getElementById('themeToggleBtn');
+      const rootElement = document.body;
+
+      function setTheme(theme) {
+        rootElement.setAttribute('data-theme', theme);
+        localStorage.setItem('pqh_theme', theme);
+        if (themeBtn) {
+          const newIcon = theme === 'light' ? '🌙' : '☀️';
+          const newText = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+          themeBtn.innerHTML = `${newIcon} <span id="themeText">${newText}</span>`;
+        }
+      }
+
+      const savedTheme = localStorage.getItem('pqh_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          const current = rootElement.getAttribute('data-theme');
+          setTheme(current === 'light' ? 'dark' : 'light');
+        });
+      }
+
+      // ----- Helper: remove any existing modal overlay -----
+      function closeExistingModal() {
+        const existingOverlay = document.getElementById('lectureModalOverlay');
+        if (existingOverlay) {
+          existingOverlay.remove();
+          document.body.style.overflow = '';
+        }
+      }
+
+      // ----- Create detailed modal for a given lecture range (1-3, 4-6, 7-9, 10-11) -----
+      function openLectureModal(lectureRange) {
+        closeExistingModal();
+        
+        // Define topics, sample questions, and extra insights based on range
+        let moduleTitle = '';
+        let topicsList = [];
+        let sampleQuestions = [];
+        let examTips = '';
+        
+        if (lectureRange === '1-3') {
+          moduleTitle = 'LEC 1–3 : Foundations & Problem Solving';
+          topicsList = [
+            'Introduction to computing & hardware basics',
+            'Algorithms and flowchart representation',
+            'Variables, constants, data types (integers, floats, strings)',
+            'Basic input/output operations in pseudocode/Python',
+            'Arithmetic & logical expressions'
+          ];
+          sampleQuestions = [
+            '📌 Q1: Draw a flowchart to determine whether a number is even or odd. (Slides LEC 2)',
+            '📌 Q2: Write an algorithm that computes the sum of first N natural numbers. (LEC 3 exercise)',
+            '📌 Q3: Explain the difference between compilation and interpretation. (LEC 1 slide reference)',
+            '📌 Q4: Evaluate the expression: (5 + 3) * 2 / 4 — convert to pseudocode. (Quiz-style)'
+          ];
+          examTips = '⚡ Midterm tip: Focus on algorithm design & pseudocode syntax.';
+        } 
+        else if (lectureRange === '4-6') {
+          moduleTitle = 'LEC 4–6 : Control Flow & Functions';
+          topicsList = [
+            'Conditional logic: if, else if, switch/case equivalents',
+            'Loops: while, for, do-while (nested loops)',
+            'Functions: definition, parameters, return values',
+            'Scope of variables & recursion basics',
+            'Common loop applications (sum, average, factorial)'
+          ];
+          sampleQuestions = [
+            '📌 Q1: Write a function that returns the factorial of a number using iteration. (LEC 5 slides)',
+            '📌 Q2: Create a program that prints the Fibonacci sequence up to n terms. (Past exam)',
+            '📌 Q3: Explain pass by value vs pass by reference in functions. (LEC 6 concept)',
+            '📌 Q4: Using a loop, determine the largest element in an array. (Revision problem)'
+          ];
+          examTips = '🎯 Midterm focus: Loop invariants and function tracing.';
+        } 
+        else if (lectureRange === '7-9') {
+          moduleTitle = 'LEC 7–9 : Arrays, Strings & Sorting';
+          topicsList = [
+            'Array declaration, initialization, and traversal',
+            'String manipulation: length, concatenation, substring',
+            'Basic sorting: bubble sort, selection sort',
+            'Searching algorithms: linear search & binary search',
+            'Multi-dimensional arrays (matrices)'
+          ];
+          sampleQuestions = [
+            '📌 Q1: Implement bubble sort to arrange [5,2,9,1,5,6] in ascending order. (LEC 8 slide)',
+            '📌 Q2: Write a program to count vowels in a string. (LEC 7 practical)',
+            '📌 Q3: Given an array of integers, find the second largest element. (Tutorial question)',
+            '📌 Q4: Perform binary search on a sorted array. Explain steps. (LEC 9)'
+          ];
+          examTips = '🔥 Common exam: array traversal & string manipulation appear frequently.';
+        } 
+        else if (lectureRange === '10-11') {
+          moduleTitle = 'LEC 10–11 : File Handling, Structures & Final Review';
+          topicsList = [
+            'File I/O: reading/writing from text files',
+            'Error handling & exceptions (try-catch)',
+            'Dictionaries / maps (key-value pairs)',
+            'Recap: all core programming concepts',
+            'Mock exam walkthrough & integration'
+          ];
+          sampleQuestions = [
+            '📌 Q1: Write code that reads numbers from a file "data.txt" and outputs their sum. (LEC 10)',
+            '📌 Q2: Design a simple student record system using dictionaries. (LEC 11 case study)',
+            '📌 Q3: Explain the importance of error handling in file operations. (Slide reference)',
+            '📌 Q4: Comprehensive: Build a mini contact manager using learned concepts. (Review challenge)'
+          ];
+          examTips = '📘 Final exam hint: File handling + dictionary problems are high-weight.';
+        }
+
+        // Build modal HTML using dynamic theme variables
+        const overlay = document.createElement('div');
+        overlay.id = 'lectureModalOverlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
+        overlay.style.backdropFilter = 'blur(6px)';
+        overlay.style.zIndex = '1000';
+        overlay.style.overflowY = 'auto';
+        overlay.style.padding = '2rem';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+
+        // Get dynamic computed colors for inline style (keeps theming consistent)
+        const computedStyle = getComputedStyle(document.body);
+        const surfaceBg = computedStyle.getPropertyValue('--bg-surface').trim();
+        const accentColor = computedStyle.getPropertyValue('--accent').trim();
+        const textMuted = computedStyle.getPropertyValue('--text-muted').trim();
+        const borderLight = computedStyle.getPropertyValue('--border-light').trim();
+
+        overlay.innerHTML = `
+          <div style="max-width: 820px; width: 100%; background: ${surfaceBg}; border-radius: 2rem; padding: 2rem; box-shadow: 0 30px 50px rgba(0,0,0,0.3); border: 1px solid ${borderLight}; position: relative; transition: all 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.2rem;">
+              <div>
+                <span style="background: var(--accent-soft); padding: 0.2rem 1rem; border-radius: 40px; font-size: 0.8rem; color: var(--accent); font-weight: 600;">Lecture Module</span>
+                <h2 style="margin-top: 0.7rem; font-size: 1.9rem; color: var(--text-primary);">${moduleTitle}</h2>
+              </div>
+              <button id="closeModalBtn" style="background: var(--bg-body); border: 1px solid ${borderLight}; border-radius: 60px; padding: 0.4rem 1rem; cursor: pointer; font-weight: 500; color: var(--text-secondary);">✕ Close</button>
+            </div>
+            <hr style="border-color: ${borderLight}; margin: 0.8rem 0;">
+            
+            <h3 style="margin: 1rem 0 0.5rem; display: flex; align-items: center; gap: 0.4rem;">📖 Core Topics (from slides)</h3>
+            <ul style="margin: 0.5rem 0 1rem 1.2rem; color: var(--text-secondary);">
+              ${topicsList.map(t => `<li style="margin: 0.5rem 0;">📘 ${t}</li>`).join('')}
+            </ul>
+
+            <h3 style="margin: 1rem 0 0.5rem; display: flex; align-items: center; gap: 0.4rem;">📝 Sample Past Questions (exam style)</h3>
+            <div style="margin: 0.5rem 0;">
+              ${sampleQuestions.map(q => `
+                <div style="background: var(--bg-body); margin: 0.8rem 0; padding: 0.9rem 1rem; border-radius: 1rem; border-left: 4px solid ${accentColor};">
+                  ${q}
+                  <div style="font-size: 0.75rem; color: ${textMuted}; margin-top: 6px;">📚 Source: ${moduleTitle} slides & question bank</div>
+                </div>
+              `).join('')}
+            </div>
+
+         
+        `;
+
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+
+        // close functions
+        const closeModal = () => {
+          overlay.remove();
+          document.body.style.overflow = '';
+        };
+
+        document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+        document.getElementById('closeModalFooterBtn')?.addEventListener('click', closeModal);
+        
+        // Click on backdrop closes modal as well
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) closeModal();
+        });
+      }
+
+      // ----- Attach click handlers to all lecture cards -----
+      const lectureCards = document.querySelectorAll('.card[data-lecture-range]');
+      lectureCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          const range = card.getAttribute('data-lecture-range');
+          if (range) {
+            openLectureModal(range);
+          } else {
+            openLectureModal('1-3'); // fallback
+          }
+        });
+      });
+
+      // ----- Optional: back to main hub link (for easy navigation) -----
+      const backBtn = document.getElementById('backToMainLink');
+      if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          // Redirect to main index page (assuming it's index.html in same directory)
+          window.location.href = 'index.html';
+        });
+      }
+
+      // If the back link fails or user doesn't have an index, we just show a small helper.
+      // Also for dynamic theme consistency when modal is closed, nothing else needed.
+    })();
+  </script>
+</body>
+</html>
