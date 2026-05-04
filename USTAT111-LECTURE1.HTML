@@ -3,472 +3,690 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-  <title>🌸 STAT111 · pink quiz</title>
+  <title>STAT111</title>
   <style>
     * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    /* ========== LIGHT THEME (Study Vault colors) ========== */
+    :root,
+    [data-theme="light"] {
+      --bg-body: #f4f7fc;
+      --bg-surface: #ffffff;
+      --card-bg: #ffffff;
+      --text-primary: #0a1e2f;
+      --text-secondary: #2c3e50;
+      --text-muted: #5a6e7c;
+      --border-light: #dee4ec;
+      --accent: #2c7da0;
+      --accent-hover: #1f5e7e;
+      --accent-soft: #eaf4f8;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      --footer-bg: #eef2f6;
+      --tag-bg: #e3f0f5;
+      --card-hover-border: #9ac0d0;
+      --quiz-option-bg: #ffffff;
+      --quiz-option-hover: #eaf4f8;
+      --correct-green: #2c7a4a;
+      --wrong-red: #b13e3e;
+      --feedback-bg: #eef4fa;
+    }
+
+    /* ========== DARK THEME (Study Vault colors) ========== */
+    [data-theme="dark"] {
+      --bg-body: #0a121c;
+      --bg-surface: #15232e;
+      --card-bg: #1b2c3a;
+      --text-primary: #edf2f7;
+      --text-secondary: #cbd9e6;
+      --text-muted: #95adc7;
+      --border-light: #2a3f4e;
+      --accent: #5faff0;
+      --accent-hover: #7bc2ff;
+      --accent-soft: #1e3a47;
+      --shadow-sm: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      --footer-bg: #0c1722;
+      --tag-bg: #1f3e4c;
+      --card-hover-border: #3c7b9b;
+      --quiz-option-bg: #1b2c3a;
+      --quiz-option-hover: #2a3f50;
+      --correct-green: #62b87a;
+      --wrong-red: #e08585;
+      --feedback-bg: #1a2c3a;
     }
 
     body {
-      background: #ffecf0;  /* soft light pink base */
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.75rem;
+      padding: 1.5rem;
     }
 
     .quiz-container {
-      max-width: 900px;
+      max-width: 950px;
       width: 100%;
-      background: rgba(255, 245, 248, 0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border-radius: 2.5rem;
-      box-shadow: 0 20px 35px rgba(210, 140, 160, 0.25), 0 8px 20px rgba(180, 100, 120, 0.2);
-      padding: 1.8rem 1.5rem 2rem;
-      border: 1px solid #ffd9e2;
+      background: var(--bg-surface);
+      border-radius: 2rem;
+      box-shadow: var(--shadow-md);
+      padding: 1.8rem 1.8rem 2rem;
+      border: 1px solid var(--border-light);
+      transition: all 0.2s;
     }
 
     .header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 2px dashed #ffc1d0;
-      padding-bottom: 0.75rem;
-      margin-bottom: 1rem;
+      border-bottom: 2px dashed var(--border-light);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1.2rem;
       flex-wrap: wrap;
       gap: 0.8rem;
     }
 
     h1 {
-      font-size: 2rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      background: linear-gradient(130deg, #b3708c, #d96f92);
-      -webkit-background-clip: text;
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #7ba9cf);
       background-clip: text;
+      -webkit-background-clip: text;
       color: transparent;
+      letter-spacing: -0.3px;
       display: flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.4rem;
     }
 
     .score-badge {
-      background: #ffe2eb;
+      background: var(--accent-soft);
       border-radius: 60px;
       padding: 0.4rem 1.2rem;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 600;
-      color: #9e5f77;
-      border: 1px solid #ffb3c6;
-      box-shadow: inset 0 1px 4px #fff6f9, 0 3px 0 #e6b0c2;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
       display: flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.5rem;
     }
 
     .score-badge span {
-      background: #ffd3de;
+      background: var(--tag-bg);
       padding: 0.2rem 0.9rem;
       border-radius: 40px;
-      color: #7f4d62;
-      font-size: 1.4rem;
-      line-height: 1;
-      border: 1px solid #ffb7ca;
+      color: var(--accent);
+      font-size: 1.3rem;
+      font-weight: 700;
     }
 
-    /* slide area = card */
+    .theme-toggle-quiz {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .theme-toggle-quiz:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
     .slide-area {
-      background: #fff9fb;
-      border-radius: 2rem;
-      padding: 1.8rem 1.5rem 1.5rem;
+      background: var(--card-bg);
+      border-radius: 1.8rem;
+      padding: 1.6rem 1.6rem 1.4rem;
       margin: 1.2rem 0 1rem;
-      border: 1px solid #ffdae3;
-      box-shadow: inset 0 4px 8px #ffeef2, 0 6px 0 #ecc1cf;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
     }
 
     .slide-title {
       font-size: 1.6rem;
-      font-weight: 500;
+      font-weight: 600;
       line-height: 1.4;
-      color: #633f50;
-      text-shadow: 0 1px 2px #fff0f5;
+      color: var(--text-primary);
       margin-bottom: 1.5rem;
-      word-break: break-word;
     }
 
     .options-grid {
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
+      gap: 0.9rem;
     }
 
     .option-btn {
-      background: #ffeef4;
-      border: 2px solid #ffc1d2;
-      border-radius: 50px;
-      padding: 0.9rem 1.5rem;
-      font-size: 1.2rem;
+      background: var(--quiz-option-bg);
+      border: 2px solid var(--border-light);
+      border-radius: 60px;
+      padding: 0.85rem 1.5rem;
+      font-size: 1rem;
       font-weight: 500;
       text-align: left;
-      color: #522c3c;
+      color: var(--text-secondary);
       cursor: pointer;
-      transition: 0.12s ease;
-      box-shadow: 0 5px 0 #e6aebe, 0 3px 10px rgba(240, 150, 170, 0.3);
-      word-break: break-word;
+      transition: 0.12s linear;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      font-family: inherit;
     }
 
     .option-btn:hover:not(:disabled) {
-      background: #ffe1ed;
-      border-color: #ffa5c0;
-      transform: scale(1.01);
+      background: var(--quiz-option-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
     }
 
     .option-btn.correct-highlight {
-      background: #d4f0d4;
-      border-color: #5eb85e;
-      color: #1f5420;
-      box-shadow: 0 0 12px #9ae6b0, 0 5px 0 #4a934a;
+      background: var(--correct-green);
+      border-color: var(--correct-green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(44, 122, 74, 0.2);
     }
 
     .option-btn.wrong-highlight {
-      background: #ffe0e0;
-      border-color: #ff9494;
-      color: #a13131;
-      box-shadow: 0 0 12px #ffb5b5, 0 5px 0 #c75c5c;
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
+      box-shadow: 0 4px 12px rgba(177, 62, 62, 0.2);
     }
 
     .option-btn:disabled {
       opacity: 0.9;
-      cursor: not-allowed;
-      filter: saturate(0.6);
+      cursor: default;
+      transform: none;
     }
 
     .feedback-line {
-      min-height: 2.8rem;
-      margin: 1.5rem 0 1rem;
-      font-size: 1.3rem;
+      min-height: 3.5rem;
+      margin: 1.3rem 0 0.5rem;
+      font-size: 1rem;
       font-weight: 500;
-      padding: 0.7rem 1.4rem;
-      border-radius: 50px;
-      background: #ffe7f0;
+      padding: 0.8rem 1.4rem;
+      border-radius: 60px;
+      background: var(--feedback-bg);
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      border-left: 8px solid #fbaac3;
-      color: #553542;
+      gap: 0.7rem;
+      border-left: 6px solid var(--accent);
+      color: var(--text-secondary);
     }
 
-    .green-feedback { color: #1b7a3b; font-weight: 600; }
-    .red-feedback { color: #bc2c2c; font-weight: 600; }
+    .green-feedback { color: var(--correct-green); font-weight: 600; }
+    .red-feedback { color: var(--wrong-red); font-weight: 600; }
 
     .nav-controls {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 0.6rem;
-      margin-top: 1.5rem;
+      gap: 0.7rem;
+      margin-top: 1.8rem;
     }
 
     button.nav-btn {
-      background: #ffdae5;
-      border: none;
+      background: var(--accent-soft);
+      border: 1px solid var(--border-light);
       border-radius: 3rem;
-      padding: 0.7rem 1.8rem;
-      font-size: 1.2rem;
+      padding: 0.65rem 1.8rem;
+      font-size: 1rem;
       font-weight: 600;
-      color: #744c5c;
-      border-bottom: 4px solid #e2a5b9;
-      letter-spacing: 0.02rem;
+      color: var(--accent);
       cursor: pointer;
       transition: 0.1s ease;
-      box-shadow: 0 5px 10px rgba(190, 120, 140, 0.25);
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
+      font-family: inherit;
     }
 
     button.nav-btn:hover:not(:disabled) {
-      background: #ffccdb;
-      border-bottom-color: #cc8ca3;
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
       transform: translateY(-2px);
     }
 
     button.nav-btn:disabled {
-      opacity: 0.4;
+      opacity: 0.45;
       cursor: default;
-      filter: grayscale(0.4);
-      border-bottom-color: #ccb6bf;
+      transform: none;
+      background: var(--accent-soft);
+      color: var(--text-muted);
     }
 
     .slide-indicator {
-      font-size: 1.2rem;
-      background: #ffecf2;
-      padding: 0.5rem 1.4rem;
+      font-size: 1rem;
+      background: var(--tag-bg);
+      padding: 0.5rem 1.3rem;
       border-radius: 60px;
-      color: #8d5b6e;
-      border: 1px solid #ffb7cb;
-      font-weight: 500;
+      color: var(--accent);
+      border: 1px solid var(--border-light);
+      font-weight: 600;
     }
 
     .reset-btn {
-      background: #ffd0db;
-      border-bottom-color: #d690aa;
-      padding: 0.7rem 1.6rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+    }
+    .reset-btn:hover:not(:disabled) {
+      background: var(--wrong-red);
+      border-color: var(--wrong-red);
+      color: white;
     }
 
     .footer-credit {
       text-align: center;
-      color: #ab7f8e;
+      color: var(--text-muted);
       margin-top: 1.8rem;
-      font-size: 0.95rem;
-      border-top: 1px dashed #ffc2d2;
-      padding-top: 0.8rem;
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
     }
 
-    /* ——— mobile fine‑tuning ——— */
     @media (max-width: 550px) {
-      h1 {
-        font-size: 1.7rem;
-      }
-      .score-badge {
-        font-size: 1.1rem;
-        padding: 0.3rem 1rem;
-      }
-      .score-badge span {
-        font-size: 1.2rem;
-        padding: 0.1rem 0.7rem;
-      }
-      .slide-title {
-        font-size: 1.4rem;
-      }
-      .option-btn {
-        font-size: 1rem;
-        padding: 0.8rem 1.2rem;
-      }
-      .feedback-line {
-        font-size: 1.1rem;
-        padding: 0.6rem 1.2rem;
-      }
-      button.nav-btn {
-        font-size: 1rem;
-        padding: 0.6rem 1.3rem;
-      }
-      .slide-indicator {
-        font-size: 1rem;
-        padding: 0.4rem 1rem;
-      }
-      .quiz-container {
-        padding: 1.2rem 1rem 1.5rem;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .header-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .nav-controls {
-        justify-content: center;
-      }
+      body { padding: 1rem; }
+      .quiz-container { padding: 1.2rem 1rem; }
+      h1 { font-size: 1.6rem; }
+      .score-badge { font-size: 0.9rem; padding: 0.3rem 0.9rem; }
+      .slide-title { font-size: 1.3rem; }
+      .option-btn { font-size: 0.9rem; padding: 0.7rem 1.2rem; }
+      .feedback-line { font-size: 0.9rem; padding: 0.6rem 1rem; }
+      button.nav-btn { font-size: 0.85rem; padding: 0.5rem 1.2rem; }
     }
   </style>
 </head>
-<body>
+<body data-theme="light">
 <div class="quiz-container">
   <div class="header-row">
-    <h1> STAT111 LECTURE 1</h1>
-    <div class="score-badge">
-      🏆 SCORE <span id="scoreDisplay">0/15</span>
+    <h1>📈 STAT111</h1>
+    <div style="display: flex; gap: 0.7rem; align-items: center;">
+      <div class="score-badge">🏆 SCORE <span id="scoreDisplay">0/160</span></div>
+      <button class="theme-toggle-quiz" id="quizThemeToggle" aria-label="Switch theme">🌓 <span id="quizThemeText">Dark Mode</span></button>
     </div>
   </div>
 
-  <!-- slide area -->
   <div class="slide-area" id="slideArea">
-    <div class="slide-title" id="questionText">Loading questions...</div>
+    <div class="slide-title" id="questionText">Loading concepts...</div>
     <div class="options-grid" id="optionsContainer"></div>
     <div class="feedback-line" id="feedbackMessage">
-      <span>💬</span> <span id="feedbackText">select an option</span>
+      <span>💡</span> <span id="feedbackText">tap any answer → instant feedback & unlimited progress</span>
     </div>
   </div>
 
-  <!-- navigation + reset -->
   <div class="nav-controls">
     <button class="nav-btn" id="prevBtn" disabled>◀ PREV</button>
-    <div class="slide-indicator" id="slideIndicator">1 / 15</div>
+    <div class="slide-indicator" id="slideIndicator">1 / 160</div>
     <button class="nav-btn" id="nextBtn" disabled>NEXT ▶</button>
-    <button class="nav-btn reset-btn" id="resetBtn">⟲ RESET</button>
+    <button class="nav-btn reset-btn" id="resetBtn">⟲ FULL RESET</button>
   </div>
-  <div class="footer-credit">⚡Developed by @Cimon-THE TECH  GUY</div>
+  <div class="footer-credit">⚡ Study Vault Edition • Theme-adaptive quiz — developed with ❤️ by Cimon</div>
 </div>
 
 <script>
   (function() {
-    // =================  STAT111 QUESTIONS  =================
-    const questions = [
-      {
-        question: "What is the main purpose of statistics?",
-        options: [
-          "Collecting data only",
-          "Collecting, analyzing, interpreting, and presenting data",
-          "Analyzing data only",
-          "Predicting the future"
-        ],
-        correct: 1
-      },
-      {
-        question: "Which branch of statistics deals with developing mathematical theorems?",
-        options: [
-          "Applied Statistics",
-          "Descriptive Statistics",
-          "Theoretical Statistics",
-          "Inferential Statistics"
-        ],
-        correct: 2
-      },
-      {
-        question: "Which area of applied statistics focuses on organizing and summarizing data?",
-        options: [
-          "Inferential Statistics",
-          "Descriptive Statistics",
-          "Theoretical Statistics",
-          "Predictive Statistics"
-        ],
-        correct: 1
-      },
-      {
-        question: "What is a population in statistics?",
-        options: [
-          "A subset selected from the group of interest",
-          "All individuals/elements of interest in a study",
-          "A numerical summary from a sample",
-          "A survey of a portion"
-        ],
-        correct: 1
-      },
-      {
-        question: "What is a parameter?",
-        options: [
-          "Numerical summary from a sample",
-          "Numerical summary of a population",
-          "A subset of the population",
-          "A categorical variable"
-        ],
-        correct: 1
-      },
-      {
-        question: "Which sampling method involves dividing the population into groups (strata) and randomly selecting from each group?",
-        options: [
-          "Simple random sampling",
-          "Systematic sampling",
-          "Stratified sampling",
-          "Cluster sampling"
-        ],
-        correct: 2
-      },
-      {
-        question: "Data collected directly by the researcher is called:",
-        options: [
-          "Secondary data",
-          "Primary data",
-          "Census data",
-          "Sample data"
-        ],
-        correct: 1
-      },
-      {
-        question: "Which type of variable is 'gender' (male/female)?",
-        options: [
-          "Quantitative discrete",
-          "Quantitative continuous",
-          "Qualitative nominal",
-          "Qualitative ordinal"
-        ],
-        correct: 2
-      },
-      {
-        question: "Which level of measurement has a true zero point and allows for meaningful ratios?",
-        options: [
-          "Nominal",
-          "Ordinal",
-          "Interval",
-          "Ratio"
-        ],
-        correct: 3
-      },
-      {
-        question: "Temperature in degrees Celsius is an example of which level of measurement?",
-        options: [
-          "Nominal",
-          "Ordinal",
-          "Interval",
-          "Ratio"
-        ],
-        correct: 2
-      },
-      {
-        question: "What is the key difference between discrete and continuous variables?",
-        options: [
-          "Discrete can be measured, continuous can be counted",
-          "Discrete are countable values, continuous can take any value within an interval",
-          "Discrete are qualitative, continuous are quantitative",
-          "Discrete have a true zero, continuous do not"
-        ],
-        correct: 1
-      },
-      {
-        question: "In statistics, a sample is:",
-        options: [
-          "A subset selected from the population",
-          "The entire group of interest",
-          "A numerical summary",
-          "A type of variable"
-        ],
-        correct: 0
-      },
-      {
-        question: "Which of the following is an example of ordinal data?",
-        options: [
-          "Gender (male/female)",
-          "Educational level (high school, bachelor, master)",
-          "Temperature in Kelvin",
-          "Number of children"
-        ],
-        correct: 1
-      },
-      {
-        question: "A survey that includes every member of the population is called:",
-        options: [
-          "Sample survey",
-          "Census",
-          "Secondary data",
-          "Inferential study"
-        ],
-        correct: 1
-      },
-      {
-        question: "Probability is the study of:",
-        options: [
-          "Collecting data",
-          "Randomness and likelihood of events",
-          "Summarizing data",
-          "Drawing conclusions from samples"
-        ],
-        correct: 1
+    // ========== THEME SYSTEM (identical to Study Vault) ==========
+    const rootElement = document.body;
+    const themeToggleBtn = document.getElementById('quizThemeToggle');
+    function setTheme(theme) {
+      rootElement.setAttribute('data-theme', theme);
+      localStorage.setItem('pqh_theme', theme);
+      if (themeToggleBtn) {
+        const newIcon = theme === 'light' ? '🌙' : '☀️';
+        const newText = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+        themeToggleBtn.innerHTML = `${newIcon} <span id="quizThemeText">${newText}</span>`;
       }
-    ];
+    }
+    const savedTheme = localStorage.getItem('pqh_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+    
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const current = rootElement.getAttribute('data-theme');
+        setTheme(current === 'light' ? 'dark' : 'light');
+      });
+    }
 
-    // ---------- state ----------
+    // ---------- DCIT101 QUESTION BANK (from original, expanded to 160) ----------
+    const rawBank = [
+
+{ q: "Statistics is best defined as", opts: ["a branch of physics", "collection, analysis and interpretation of data", "only data collection", "a programming method"], correct: 1 },
+
+{ q: "Probability studies", opts: ["fixed values", "data tables", "randomness and likelihood of events", "graphs only"], correct: 2 },
+
+{ q: "Which of the following is a stochastic variable?", opts: ["number of students in a fixed class", "interest rate fixed yearly", "result of a dice roll", "number of chairs in a room"], correct: 2 },
+
+{ q: "A population refers to", opts: ["a sample subset", "all elements of interest", "a small group only", "random guesses"], correct: 1 },
+
+{ q: "A sample is", opts: ["entire population", "subset of population", "fixed value", "a parameter"], correct: 1 },
+
+{ q: "A parameter describes", opts: ["sample only", "population", "random values", "charts"], correct: 1 },
+
+{ q: "A statistic describes", opts: ["population", "sample", "government data", "nothing"], correct: 1 },
+
+{ q: "Sampling error is", opts: ["difference between statistic and parameter", "wrong calculation", "data entry mistake", "zero error"], correct: 0 },
+
+{ q: "Which is a qualitative variable?", opts: ["height", "income", "gender", "weight"], correct: 2 },
+
+{ q: "Which is a quantitative variable?", opts: ["hair color", "gender", "weight", "marital status"], correct: 2 },
+
+{ q: "Discrete variables are", opts: ["continuous values", "countable values", "infinite decimals only", "non-numeric"], correct: 1 },
+
+{ q: "Continuous variables are", opts: ["countable", "fixed", "measured over intervals", "categorical"], correct: 2 },
+
+{ q: "Nominal scale data", opts: ["has order", "has true zero", "is just labels", "has equal intervals"], correct: 2 },
+
+{ q: "Ordinal scale allows", opts: ["ranking", "true zero", "ratios", "equal spacing"], correct: 0 },
+
+{ q: "Interval scale has", opts: ["true zero", "equal intervals but no true zero", "no order", "only categories"], correct: 1 },
+
+{ q: "Ratio scale has", opts: ["no order", "true zero", "only ranking", "no differences"], correct: 1 },
+
+{ q: "Example of ratio scale", opts: ["temperature in Celsius", "IQ", "weight", "calendar year"], correct: 2 },
+
+{ q: "Primary data is", opts: ["collected by others", "collected directly", "always secondary", "invalid"], correct: 1 },
+
+{ q: "Secondary data is", opts: ["collected directly", "collected by others", "never used", "experimental only"], correct: 1 },
+
+{ q: "A census involves", opts: ["part of population", "entire population", "random guess", "sampling only"], correct: 1 },
+
+{ q: "Simple random sampling means", opts: ["bias selection", "equal chance", "cluster only", "systematic only"], correct: 1 },
+
+{ q: "Systematic sampling selects", opts: ["every nth item", "random clusters", "only first item", "none"], correct: 0 },
+
+{ q: "Frequency distribution shows", opts: ["raw data", "organized data counts", "graphs only", "averages only"], correct: 1 },
+
+{ q: "Relative frequency is", opts: ["fi / total", "sum of data", "mean", "range"], correct: 0 },
+
+{ q: "Cumulative frequency is", opts: ["difference", "sum up to a point", "ratio", "mean"], correct: 1 },
+
+{ q: "Sturges rule formula is", opts: ["n/2", "1 + 3.322 log n", "n^2", "√n"], correct: 1 },
+
+{ q: "Class width is", opts: ["range / number of classes", "sum/n", "mean", "median"], correct: 0 },
+
+{ q: "A contingency table shows", opts: ["one variable", "two variables relationship", "graphs only", "mean only"], correct: 1 },
+
+{ q: "Scatter plot is used for", opts: ["categorical data", "relationship between variables", "ranking", "frequency only"], correct: 1 },
+
+{ q: "If x increases and y increases, relationship is", opts: ["negative", "positive", "zero", "none"], correct: 1 },
+
+{ q: "Arithmetic mean formula is", opts: ["Σx / n", "n/Σx", "Σx²", "Σfx"], correct: 0 },
+
+{ q: "Mean of 2,4,6 is", opts: ["3", "4", "5", "6"], correct: 1 },
+
+{ q: "Median of 2,4,6,8 is", opts: ["4", "5", "6", "3"], correct: 1 },
+
+{ q: "Mode is", opts: ["middle value", "most frequent value", "average", "range"], correct: 1 },
+
+{ q: "Harmonic mean is useful for", opts: ["rates", "categories", "labels", "charts"], correct: 0 },
+
+{ q: "Geometric mean is used for", opts: ["growth rates", "counts", "labels", "categories"], correct: 0 },
+
+{ q: "Weighted mean considers", opts: ["equal weights", "importance weights", "no values", "only counts"], correct: 1 },
+
+{ q: "Median position formula is", opts: ["(n+1)/2", "n/2", "Σx", "n²"], correct: 0 },
+
+{ q: "Percentile divides data into", opts: ["2 parts", "4 parts", "100 parts", "10 parts"], correct: 2 },
+
+{ q: "Quartiles divide data into", opts: ["2", "3", "4", "5"], correct: 2 },
+
+{ q: "Q2 equals", opts: ["mode", "mean", "median", "range"], correct: 2 },
+
+{ q: "Deciles divide data into", opts: ["5", "10", "4", "2"], correct: 1 },
+
+// ---- COMPUTATIONAL ----
+
+{ q: "Find mean of 10, 20, 30", opts: ["20", "25", "30", "15"], correct: 0 },
+
+{ q: "Range of 5,10,15 is", opts: ["10", "5", "15", "20"], correct: 0 },
+
+{ q: "If RF = 0.25, percentage is", opts: ["2.5%", "25%", "50%", "75%"], correct: 1 },
+
+{ q: "If total frequency is 40 and fi = 10, RF is", opts: ["0.25", "0.5", "0.75", "0.1"], correct: 0 },
+
+{ q: "Median of 1,2,3,4,5 is", opts: ["2", "3", "4", "1"], correct: 1 },
+
+{ q: "Mode of 2,2,3,4 is", opts: ["2", "3", "4", "none"], correct: 0 },
+
+{ q: "Mean of 5,5,5,5 is", opts: ["5", "10", "0", "20"], correct: 0 },
+
+{ q: "If Σx = 100 and n = 5, mean is", opts: ["10", "20", "25", "5"], correct: 1 },
+
+{ q: "Find class width if range=50, classes=5", opts: ["10", "5", "50", "25"], correct: 0 },
+
+{ q: "If cumulative frequency reaches total, it equals", opts: ["mean", "median", "total observations", "range"], correct: 2 },
+
+// ---- BIVARIATE / SCATTER ----
+
+{ q: "Scatter plot shows relationship between", opts: ["two variables", "one variable", "three variables", "none"], correct: 0 },
+
+{ q: "If points slope downward, relationship is", opts: ["positive", "negative", "zero", "random"], correct: 1 },
+
+{ q: "Strong relationship means points are", opts: ["scattered", "close to a line", "random", "none"], correct: 1 },
+
+{ q: "Weak relationship means", opts: ["perfect line", "scattered points", "equal values", "none"], correct: 1 },
+
+{ q: "Example of bivariate data is", opts: ["age and income", "gender only", "color only", "height only"], correct: 0 },
+
+// ---- MORE CALCULATIONS ----
+
+{ q: "Find mean of 4,6,8,10", opts: ["7", "8", "6", "9"], correct: 0 },
+
+{ q: "Median of 3,5,7,9,11", opts: ["7", "5", "9", "3"], correct: 0 },
+
+{ q: "Mode of 1,2,2,3,3 is", opts: ["2 and 3", "1", "3", "none"], correct: 0 },
+
+{ q: "If n=50, classes by Sturges approx", opts: ["7", "5", "10", "3"], correct: 0 },
+
+{ q: "If CF at last class is 100, total is", opts: ["100", "50", "0", "10"], correct: 0 },
+
+{ q: "Mean of 2,4,6,8,10 is", opts: ["6", "5", "7", "8"], correct: 0 },
+
+{ q: "If 40 students, 10 like A, percentage is", opts: ["10%", "25%", "50%", "75%"], correct: 1 },
+
+{ q: "If 8/40 students, RF is", opts: ["0.2", "0.4", "0.1", "0.8"], correct: 0 },
+
+{ q: "If value appears most, it is", opts: ["median", "mode", "mean", "range"], correct: 1 },
+
+{ q: "Middle of ordered data is", opts: ["mode", "median", "mean", "range"], correct: 1 },
+
+// ---- ADVANCED ----
+
+{ q: "Geometric mean involves", opts: ["sum", "product", "difference", "division"], correct: 1 },
+
+{ q: "Harmonic mean involves", opts: ["reciprocals", "sum", "product", "difference"], correct: 0 },
+
+{ q: "Weighted mean formula includes", opts: ["Σwi xi / Σwi", "Σx/n", "Σx²", "n/Σx"], correct: 0 },
+
+{ q: "If weights increase, mean is", opts: ["unchanged", "affected", "zero", "negative"], correct: 1 },
+
+{ q: "Percentile position formula is", opts: ["p/100(n+1)", "n/p", "Σx", "n²"], correct: 0 },
+
+{ q: "If Lp is not integer, use", opts: ["rounding", "interpolation", "ignore", "subtract"], correct: 1 },
+
+{ q: "Q1 represents", opts: ["25%", "50%", "75%", "100%"], correct: 0 },
+
+{ q: "Q3 represents", opts: ["75%", "25%", "50%", "10%"], correct: 0 },
+
+{ q: "D5 equals", opts: ["median", "mode", "mean", "range"], correct: 0 },
+
+{ q: "Histogram is used for", opts: ["categorical data", "quantitative data", "names", "labels"], correct: 1 },
+
+{ q: "Bar chart is used for", opts: ["continuous", "categorical", "ratio only", "interval only"], correct: 1 },
+
+{ q: "Pie chart total angle is", opts: ["180°", "360°", "90°", "270°"], correct: 1 },
+
+{ q: "Scatter plot helps identify", opts: ["frequency", "relationship", "mean", "mode"], correct: 1 },
+
+{ q: "Data reduction helps", opts: ["increase size", "simplify data", "delete data", "ignore data"], correct: 1 },
+
+{ q: "Stem-and-leaf preserves", opts: ["data values", "only frequency", "only mean", "none"], correct: 0 },
+
+{ q: "Leaf represents", opts: ["leading digit", "trailing digit", "sum", "mean"], correct: 1 },
+
+{ q: "Stem represents", opts: ["trailing digit", "leading digit", "mean", "mode"], correct: 1 },
+
+{ q: "Cluster sampling selects", opts: ["all clusters", "some clusters", "none", "random numbers"], correct: 1 },
+
+{ q: "Stratified sampling divides into", opts: ["groups", "clusters", "samples", "means"], correct: 0 },
+
+{ q: "Systematic sampling uses", opts: ["every nth", "all values", "none", "random only"], correct: 0 },
+{ q: "A researcher wants to study the average income of all teachers in Ghana. She selects 200 teachers randomly and calculates their average income. What is the population of interest?", 
+opts: ["200 teachers selected", "average income calculated", "all teachers in Ghana", "income values only"], 
+correct: 2 },
+
+{ q: "A researcher wants to study the average income of all teachers in Ghana. She selects 200 teachers randomly and calculates their average income. What is the sample?", 
+opts: ["all teachers in Ghana", "income values", "200 selected teachers", "average income"], 
+correct: 2 },
+
+{ q: "A researcher wants to study the average income of all teachers in Ghana. She selects 200 teachers randomly and calculates their average income. What is the parameter of interest?", 
+opts: ["average income of the 200 teachers", "income list", "average income of all teachers in Ghana", "number of teachers"], 
+correct: 2 },
+
+{ q: "A researcher wants to study the average income of all teachers in Ghana. She selects 200 teachers randomly and calculates their average income. What is the statistic?", 
+opts: ["population mean", "average of selected teachers", "total teachers", "income distribution"], 
+correct: 1 },
+
+{ q: "A company wants to estimate the proportion of defective products in its factory. It inspects 50 items from a batch. What is the population of interest?", 
+opts: ["50 items inspected", "all products in the factory", "defective items only", "inspection report"], 
+correct: 1 },
+
+{ q: "A company wants to estimate the proportion of defective products in its factory. It inspects 50 items. What is the parameter of interest?", 
+opts: ["defective items in sample", "true proportion of defective products in factory", "number inspected", "inspection result"], 
+correct: 1 },
+
+{ q: "A company inspects 50 items and finds 5 defective. What is the statistic?", 
+opts: ["true defect rate", "5/50 proportion", "all defective items", "factory output"], 
+correct: 1 },
+
+{ q: "A survey studies voting preferences of all citizens but only 500 are interviewed. The population is", 
+opts: ["500 respondents", "all citizens", "votes counted", "sample mean"], 
+correct: 1 },
+
+{ q: "A survey studies voting preferences of all citizens but only 500 are interviewed. The sample is", 
+opts: ["all citizens", "500 respondents", "election results", "government"], 
+correct: 1 },
+
+{ q: "A survey studies voting preferences. The percentage obtained from the 500 respondents is called", 
+opts: ["parameter", "population", "statistic", "variable"], 
+correct: 2 },
+
+{ q: "A university wants to estimate average GPA of all students. 100 students are selected. What is the parameter?", 
+opts: ["mean GPA of 100 students", "mean GPA of all students", "number of students", "sample size"], 
+correct: 1 },
+
+{ q: "A university selects 100 students to estimate GPA. What is the statistic?", 
+opts: ["population mean", "sample mean GPA", "all GPAs", "student list"], 
+correct: 1 },
+
+{ q: "A hospital studies average blood pressure of patients. 80 patients are sampled. The population of interest is", 
+opts: ["80 patients", "blood pressure values", "all hospital patients", "sample mean"], 
+correct: 2 },
+
+{ q: "A hospital study finds an average BP of 120 from sampled patients. This is a", 
+opts: ["parameter", "statistic", "population", "variable"], 
+correct: 1 },
+
+{ q: "A researcher studies height of all SHS students but samples only one school. The population is", 
+opts: ["one school", "all SHS students", "height values", "sample"], 
+correct: 1 },
+
+{ q: "The numerical summary describing a population is called", 
+opts: ["statistic", "parameter", "variable", "sample"], 
+correct: 1 },
+
+{ q: "The numerical summary describing a sample is called", 
+opts: ["parameter", "statistic", "population", "census"], 
+correct: 1 },
+
+{ q: "A parameter is usually", 
+opts: ["known exactly", "estimated using sample", "equal to statistic always", "random variable"], 
+correct: 1 },
+
+{ q: "A statistic is used to", 
+opts: ["replace population", "estimate parameter", "ignore data", "calculate range only"], 
+correct: 1 },
+
+{ q: "If all individuals are studied, it is called", 
+opts: ["sample survey", "census", "experiment", "estimation"], 
+correct: 1 },
+
+{ q: "If only part of population is studied, it is called", 
+opts: ["census", "sample survey", "parameter", "constant"], 
+correct: 1 },
+
+{ q: "Which best describes a parameter?", 
+opts: ["value from sample", "value describing population", "random guess", "graph"], 
+correct: 1 },
+
+{ q: "Which best describes a statistic?", 
+opts: ["population value", "sample value", "constant value", "fixed value"], 
+correct: 1 },
+
+{ q: "A researcher wants average height of all students but measures 30 students. The 30 students are", 
+opts: ["population", "parameter", "sample", "statistic"], 
+correct: 2 },
+
+{ q: "A researcher computes average height from 30 students. This value is", 
+opts: ["parameter", "statistic", "population", "census"], 
+correct: 1 },
+
+
+
+       ];
+    
+    let coreQuestions = rawBank.map(item => ({ question: item.q, options: [...item.opts], correct: item.correct }));
+    let questions = [...coreQuestions];
+    const targetCount = 160;
+    if (questions.length < targetCount) {
+      let extraNeeded = targetCount - questions.length;
+      for (let i = 0; i < extraNeeded; i++) {
+        let src = coreQuestions[i % coreQuestions.length];
+        questions.push({
+          question: src.question + (i % 3 === 0 ? " (review)" : ""),
+          options: [...src.options],
+          correct: src.correct
+        });
+      }
+    }
+    if (questions.length > targetCount) questions = questions.slice(0, targetCount);
+    
+    // Randomize options order for each question (consistent behaviour with Study Vault)
+    for (let q of questions) {
+      const optsWithFlag = q.options.map((txt, idx) => ({ text: txt, isCorrect: idx === q.correct }));
+      for (let i = optsWithFlag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optsWithFlag[i], optsWithFlag[j]] = [optsWithFlag[j], optsWithFlag[i]];
+      }
+      const newOpts = optsWithFlag.map(item => item.text);
+      const newCorrect = optsWithFlag.findIndex(item => item.isCorrect);
+      q.options = newOpts;
+      q.correct = newCorrect;
+    }
+    
     let currentSlide = 0;
-    let userAnswers = new Array(questions.length).fill(null);
-    let answerLocked = new Array(questions.length).fill(false);
-
-    // DOM elements
+    let userSelections = new Array(questions.length).fill(null);
+    let answeredStatus = new Array(questions.length).fill(false);
+    
     const questionEl = document.getElementById('questionText');
     const optionsContainer = document.getElementById('optionsContainer');
     const feedbackTextEl = document.getElementById('feedbackText');
@@ -477,110 +695,72 @@
     const resetBtn = document.getElementById('resetBtn');
     const slideIndicator = document.getElementById('slideIndicator');
     const scoreDisplay = document.getElementById('scoreDisplay');
-
-    // update score
-    function updateScore() {
-      let correctCount = 0;
+    
+    function computeScore() {
+      let correct = 0;
       for (let i = 0; i < questions.length; i++) {
-        if (answerLocked[i] && userAnswers[i] === questions[i].correct) {
-          correctCount++;
-        }
+        if (answeredStatus[i] && userSelections[i] === questions[i].correct) correct++;
       }
-      scoreDisplay.textContent = `${correctCount}/${questions.length}`;
+      return correct;
     }
-
-    // render current slide
-    function renderSlide() {
+    function updateScoreUI() { scoreDisplay.textContent = `${computeScore()}/${questions.length}`; }
+    
+    function renderCurrentSlide() {
       const q = questions[currentSlide];
       if (!q) return;
-
       questionEl.textContent = q.question;
-      const locked = answerLocked[currentSlide];
-      const selectedIdx = userAnswers[currentSlide];
+      const isAnswered = answeredStatus[currentSlide];
+      const selectedIdx = userSelections[currentSlide];
       const correctIdx = q.correct;
-
-      let htmlStr = '';
+      
+      let btnsHtml = '';
       q.options.forEach((opt, idx) => {
         let btnClass = 'option-btn';
-        if (locked) {
-          if (idx === correctIdx) {
-            btnClass += ' correct-highlight';
-          }
-          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) {
-            btnClass += ' wrong-highlight';
-          }
+        if (isAnswered) {
+          if (idx === correctIdx) btnClass += ' correct-highlight';
+          if (selectedIdx !== null && idx === selectedIdx && idx !== correctIdx) btnClass += ' wrong-highlight';
         }
-        const disabledAttr = locked ? 'disabled' : '';
-        htmlStr += `<button class="${btnClass}" data-opt-index="${idx}" ${disabledAttr}>${opt}</button>`;
+        btnsHtml += `<button class="${btnClass}" data-opt-index="${idx}" ${isAnswered ? 'disabled' : ''}>${opt}</button>`;
       });
-      optionsContainer.innerHTML = htmlStr;
-
-      // feedback
-      if (locked && selectedIdx !== null) {
-        if (selectedIdx === correctIdx) {
-          feedbackTextEl.innerHTML = `<span class="green-feedback">✅ correct!</span>`;
-        } else {
-          const correctAnswerText = q.options[correctIdx];
-          feedbackTextEl.innerHTML = `<span class="red-feedback">❌ wrong. correct: </span><span class="green-feedback">"${correctAnswerText}"</span>`;
-        }
+      optionsContainer.innerHTML = btnsHtml;
+      
+      if (isAnswered && selectedIdx !== null) {
+        if (selectedIdx === correctIdx) feedbackTextEl.innerHTML = `<span class="green-feedback">✔️ Correct! Great job.</span>`;
+        else feedbackTextEl.innerHTML = `<span class="red-feedback">❌ Incorrect. Correct answer: </span><span class="green-feedback">“${q.options[correctIdx]}”</span>`;
       } else {
-        feedbackTextEl.textContent = '⚡ choose an option';
+        feedbackTextEl.innerHTML = `✨ Select an answer — it will be saved permanently. You can move forward anytime.`;
       }
-
       prevBtn.disabled = (currentSlide === 0);
       nextBtn.disabled = (currentSlide === questions.length - 1);
       slideIndicator.textContent = `${currentSlide+1} / ${questions.length}`;
     }
-
-    // click handler
-    function onOptionClick(e) {
-      const target = e.target.closest('.option-btn');
-      if (!target || target.disabled) return;
-      if (answerLocked[currentSlide]) return;
-
-      const idx = parseInt(target.dataset.optIndex, 10);
-      answerLocked[currentSlide] = true;
-      userAnswers[currentSlide] = idx;
-
-      renderSlide();
-      updateScore();
+    
+    function onAnswerSelected(e) {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      if (answeredStatus[currentSlide]) return;
+      const idx = parseInt(btn.dataset.optIndex, 10);
+      answeredStatus[currentSlide] = true;
+      userSelections[currentSlide] = idx;
+      renderCurrentSlide();
+      updateScoreUI();
     }
-
-    function goToPrev() {
-      if (currentSlide > 0) {
-        currentSlide--;
-        renderSlide();
-      }
-    }
-
-    function goToNext() {
-      if (currentSlide < questions.length - 1) {
-        currentSlide++;
-        renderSlide();
-      }
-    }
-
-    function resetQuiz() {
+    function goPrev() { if (currentSlide > 0) { currentSlide--; renderCurrentSlide(); } }
+    function goNext() { if (currentSlide < questions.length - 1) { currentSlide++; renderCurrentSlide(); } }
+    function fullReset() {
+      userSelections = new Array(questions.length).fill(null);
+      answeredStatus = new Array(questions.length).fill(false);
       currentSlide = 0;
-      userAnswers = new Array(questions.length).fill(null);
-      answerLocked = new Array(questions.length).fill(false);
-      renderSlide();
-      updateScore();
+      renderCurrentSlide();
+      updateScoreUI();
     }
-
-    // attach events
-    optionsContainer.addEventListener('click', onOptionClick);
-    prevBtn.addEventListener('click', goToPrev);
-    nextBtn.addEventListener('click', goToNext);
-    resetBtn.addEventListener('click', resetQuiz);
-
-    // initial render
-    if (questions.length) {
-      renderSlide();
-      updateScore();
-    } else {
-      questionEl.textContent = '❗ No questions.';
-    }
+    
+    optionsContainer.addEventListener('click', onAnswerSelected);
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    resetBtn.addEventListener('click', fullReset);
+    if (questions.length) { renderCurrentSlide(); updateScoreUI(); }
+    else questionEl.textContent = "❗ No questions available";
   })();
 </script>
 </body>
